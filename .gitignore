@@ -16,3 +16,6 @@ Cert/6f91ab0513265dd68df9100fdbb5d56ed3b177b58d600fec346426026a6b51c0-private.pe
 Cert/6f91ab0513265dd68df9100fdbb5d56ed3b177b58d600fec346426026a6b51c0-public.pem.key
 Cert/AmazonRootCA1.pem
 Cert/AmazonRootCA3.pem
+Cert/Developer_accessKeys.csv
+Cert/Developer_credentials.csv
+.gitignore
