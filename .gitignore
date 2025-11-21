@@ -11,3 +11,7 @@ aws-exports.ts
 .env.*
 .vscode/
 .DS_Store
+D:\Codes\git\NackademiN\AWS\Amplify_App_AWS\Cert\6f91ab0513265dd68df9100fdbb5d56ed3b177b58d600fec346426026a6b51c0-certificate.pem.crt
+D:\Codes\git\NackademiN\AWS\Amplify_App_AWS\Cert\6f91ab0513265dd68df9100fdbb5d56ed3b177b58d600fec346426026a6b51c0-public.pem.key
+D:\Codes\git\NackademiN\AWS\Amplify_App_AWS\Cert\AmazonRootCA1.pem
+D:\Codes\git\NackademiN\AWS\Amplify_App_AWS\Cert\AmazonRootCA3.pem
