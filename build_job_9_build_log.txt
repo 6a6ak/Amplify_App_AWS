@@ -1,0 +1,60 @@
+2025-11-21T22:47:20.433Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-11-21T22:47:21.075Z [INFO]: # Cloning repository: git@github.com:6a6ak/Amplify_App_AWS.git
+2025-11-21T22:47:22.009Z [INFO]: 
+2025-11-21T22:47:22.010Z [INFO]: Cloning into 'Amplify_App_AWS'...
+2025-11-21T22:47:22.010Z [INFO]: # Checking for Git submodules at: /codebuild/output/src2292450650/src/Amplify_App_AWS/.gitmodules
+2025-11-21T22:47:22.019Z [INFO]: # Retrieving environment cache...
+2025-11-21T22:47:22.087Z [INFO]: # Retrieved environment cache
+2025-11-21T22:47:22.087Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-11-21T22:47:22.087Z [INFO]: SSM params {"Path":"/amplify/ddhdykrrt63i6/main/","WithDecryption":true}
+2025-11-21T22:47:22.138Z [WARNING]: !Failed to set up process.env.secrets
+2025-11-21T22:47:22.885Z [INFO]: # No package override configuration found.
+2025-11-21T22:47:22.890Z [INFO]: # Retrieving cache...
+2025-11-21T22:47:23.361Z [INFO]: # Extracting cache...
+2025-11-21T22:47:23.492Z [INFO]: # Extraction completed
+2025-11-21T22:47:23.496Z [INFO]: # Retrieved cache
+2025-11-21T22:47:28.154Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-11-21T22:47:28.161Z [INFO]: ## Starting Frontend Build
+2025-11-21T22:47:28.161Z [INFO]: # Starting phase: preBuild
+                                 # Executing command: npm install
+2025-11-21T22:47:44.979Z [INFO]: up to date, audited 14 packages in 12s
+2025-11-21T22:47:44.987Z [INFO]: 3 packages are looking for funding
+                                 run `npm fund` for details
+2025-11-21T22:47:44.991Z [INFO]: 2 moderate severity vulnerabilities
+                                 To address all issues (including breaking changes), run:
+                                 npm audit fix --force
+                                 Run `npm audit` for details.
+2025-11-21T22:47:44.999Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+                                 # Executing command: npm run build
+2025-11-21T22:47:45.101Z [INFO]: > amplify-app-aws@0.1.0 build
+                                 > vite build
+2025-11-21T22:47:46.030Z [INFO]: vite v4.5.14 building for production...
+2025-11-21T22:47:46.061Z [INFO]: transforming...
+2025-11-21T22:47:46.745Z [INFO]: ✓ 26 modules transformed.
+2025-11-21T22:47:46.828Z [INFO]: rendering chunks...
+2025-11-21T22:47:46.833Z [INFO]: computing gzip size...
+2025-11-21T22:47:46.839Z [INFO]: dist/index.html                   0.38 kB │ gzip:  0.26 kB
+2025-11-21T22:47:46.839Z [INFO]: dist/assets/index-77ba6fe3.css    0.09 kB │ gzip:  0.09 kB
+                                 dist/assets/index-f38bd844.js   142.24 kB │ gzip: 45.89 kB
+2025-11-21T22:47:46.840Z [INFO]: ✓ built in 808ms
+2025-11-21T22:47:46.854Z [INFO]: # Completed phase: build
+                                 ## Completed Frontend Build
+2025-11-21T22:47:46.864Z [INFO]: ## Build completed successfully
+2025-11-21T22:47:46.865Z [INFO]: # Starting caching...
+2025-11-21T22:47:46.872Z [INFO]: # Creating cache artifact...
+2025-11-21T22:47:47.094Z [INFO]: # Created cache artifact
+2025-11-21T22:47:47.094Z [INFO]: # Uploading cache artifact...
+2025-11-21T22:47:47.489Z [INFO]: # Uploaded cache artifact
+2025-11-21T22:47:47.489Z [INFO]: # Caching completed
+2025-11-21T22:47:47.495Z [INFO]: # Starting build artifact upload process...
+2025-11-21T22:47:47.534Z [INFO]: # Uploading build artifact '__artifacts.zip'...
+2025-11-21T22:47:47.616Z [INFO]: # Build artifact upload completed
+2025-11-21T22:47:47.616Z [INFO]: # Starting environment caching...
+2025-11-21T22:47:47.616Z [INFO]: # Uploading environment cache artifact...
+2025-11-21T22:47:47.706Z [INFO]: # Uploaded environment cache artifact
+2025-11-21T22:47:47.706Z [INFO]: # Environment caching completed
+
