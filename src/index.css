@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #f7f7f7;
+}
+input {
+  padding: 6px;
+}
+button {
+  padding: 6px 10px;
+}
