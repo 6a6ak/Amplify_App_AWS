@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+amplify/#current-cloud-backend
+amplify/.config/local-*
+amplify/.config/local-env-info.json
+amplify/backend/amplify-meta.json
+aws-exports.js
+aws-exports.ts
+.env.local
+.env.*
+.vscode/
+.DS_Store
