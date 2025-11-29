@@ -3,21 +3,24 @@ import React, { useEffect, useState, useRef } from 'react';
 export default function DeviceStatus({ apiBase = '' }) {
   const [devices, setDevices] = useState([]);
   const [sseConnected, setSseConnected] = useState(false);
-  // When running in Vite dev mode the frontend origin is different (5173).
-  // Default to the API server on localhost:3333 in development so fetch/SSE go to the API.
-  const devBase = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.MODE === 'development' ? 'http://localhost:3333' : '';
-  const base = apiBase || devBase || '';
+  // Simplified base selection:
+  // - Prefer explicit `apiBase` prop
+  // - Else `VITE_API_BASE` if defined at build time
+  // - Else use relative paths (same-origin)
+  const base = apiBase || (import.meta?.env?.VITE_API_BASE || '');
   const evtSourceRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
-    fetch(base + '/api/devices')
+    const devicesUrl = base ? (base + '/api/devices') : '/api/devices';
+    fetch(devicesUrl)
       .then((r) => r.ok ? r.json() : Promise.reject('fetch-failed'))
       .then((j) => mounted && setDevices(j.devices || []))
       .catch(() => mounted && setDevices([]));
 
     // connect SSE
-    const es = new EventSource(base + '/api/events');
+    const eventsUrl = base ? (base + '/api/events') : '/api/events';
+    const es = new EventSource(eventsUrl);
     evtSourceRef.current = es;
     es.addEventListener('status', (e) => {
       try {
