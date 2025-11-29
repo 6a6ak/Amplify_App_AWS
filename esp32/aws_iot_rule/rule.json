@@ -4,7 +4,7 @@
     {
       "s3": {
         "roleArn": "arn:aws:iam::037151312069:role/IoTRuleRole-ECE334B3BE68",
-        "bucketName": "ECE334B3BE68",
+        "bucketName": "037151312069",
         "key": "${topic()}/${timestamp()}.json"
       }
     },

@@ -2,46 +2,82 @@
 set -euo pipefail
 
 # Simple deploy helper for this repo (Amplify + local build helpers)
-# Usage: ./deploy.sh <command>
-# Commands: help status push build create-branch start-release deploy list-branches list-jobs delete-branch
+# Preset defaults (can be overridden via env)
+PRESET1_NAME=${PRESET1_NAME:-local}
+PRESET1_PROFILE=${PRESET1_PROFILE:-default}
+PRESET1_APP_ID=${PRESET1_APP_ID:-ddhdykrrt63i6}
+PRESET1_BRANCH=${PRESET1_BRANCH:-release}
+PRESET1_REGION=${PRESET1_REGION:-eu-central-1}
 
-APP_ID=${APP_ID:-ddhdykrrt63i6}
-REGION=${REGION:-eu-central-1}
-BRANCH=${BRANCH:-release}
-# defaults for options
-FORCE_PUSH=${FORCE_PUSH:-false}
-AUTO_BUILD=${AUTO_BUILD:-true}
-ROLE_ARN=${ROLE_ARN:-}
+PRESET2_NAME=${PRESET2_NAME:-dev}
+PRESET2_PROFILE=${PRESET2_PROFILE:-dev}
+PRESET2_APP_ID=${PRESET2_APP_ID:-ddhdykrrt63i6}
+PRESET2_BRANCH=${PRESET2_BRANCH:-dev}
+PRESET2_REGION=${PRESET2_REGION:-eu-central-1}
 
-usage(){
-  cat <<EOF
-Usage: $0 <command>
-Commands:
-  help             Show this message
-  status           Show git status and last commit
-  push             Commit (if any) and push local $BRANCH to origin
-  build            Run frontend build (npm run build)
-  create-branch    Create Amplify branch for $BRANCH (if missing)
-  start-release    Start an Amplify RELEASE job for $BRANCH
-  deploy           push -> ensure amplify branch -> start-release
-  list-branches    List Amplify branches for app $APP_ID
-  list-jobs        List Amplify jobs for branch $BRANCH
-  delete-branch BR  Delete branch BR from Amplify
-EOF
+PRESET3_NAME=${PRESET3_NAME:-prod}
+PRESET3_PROFILE=${PRESET3_PROFILE:-prod}
+PRESET3_APP_ID=${PRESET3_APP_ID:-ddhdykrrt63i6}
+PRESET3_BRANCH=${PRESET3_BRANCH:-main}
+PRESET3_REGION=${PRESET3_REGION:-eu-central-1}
+
+cmd_menu(){
+  echo "Select account preset:"
+  echo "  1) $PRESET1_NAME (profile: $PRESET1_PROFILE, branch: $PRESET1_BRANCH)"
+  echo "  2) $PRESET2_NAME (profile: $PRESET2_PROFILE, branch: $PRESET2_BRANCH)"
+  echo "  3) $PRESET3_NAME (profile: $PRESET3_PROFILE, branch: $PRESET3_BRANCH)"
+  read -rp "Choose 1,2 or 3: " sel
+  case "$sel" in
+    1)
+      sel_profile="$PRESET1_PROFILE"; sel_app="$PRESET1_APP_ID"; sel_branch="$PRESET1_BRANCH"; sel_region="$PRESET1_REGION";;
+    2)
+      sel_profile="$PRESET2_PROFILE"; sel_app="$PRESET2_APP_ID"; sel_branch="$PRESET2_BRANCH"; sel_region="$PRESET2_REGION";;
+    3)
+      sel_profile="$PRESET3_PROFILE"; sel_app="$PRESET3_APP_ID"; sel_branch="$PRESET3_BRANCH"; sel_region="$PRESET3_REGION";;
+    *)
+      echo "Invalid selection"; return 1;;
+  esac
+
+  export AWS_PROFILE="$sel_profile"
+  APP_ID="$sel_app" BRANCH="$sel_branch" REGION="$sel_region"
+  echo "Selected: profile=$sel_profile app=$APP_ID branch=$BRANCH region=$REGION"
+
+  echo "Choose action:"
+  echo "  1) Run frontend locally (npm run dev)"
+  echo "  2) Deploy to Amplify (push + ensure branch + start-release)"
+  echo "  3) Exit"
+  read -rp "Select 1-3: " act
+
+  case "$act" in
+    1)
+      echo "Starting frontend dev server (runs in foreground). Use Ctrl+C to stop."
+      npm install
+      npm run dev
+      ;;
+    2)
+      echo "Deploying branch '$BRANCH' to Amplify..."
+      if [ "$FORCE_PUSH" = true ]; then
+        git push --force origin "$BRANCH"
+      else
+        cmd_push
+      fi
+      if [ "$AUTO_BUILD" = true ]; then
+        cmd_create_branch
+      else
+        require_aws
+        aws amplify get-branch --app-id "$APP_ID" --branch-name "$BRANCH" --region "$REGION" >/dev/null 2>&1 || \
+          aws amplify create-branch --app-id "$APP_ID" --branch-name "$BRANCH" --enable-auto-build false --region "$REGION"
+      fi
+      cmd_start_release
+      ;;
+    3)
+      echo "Exit."; return 0
+      ;;
+    *)
+      echo "Invalid action"; return 1;;
+  esac
 }
 
-require_aws(){
-  if ! command -v aws >/dev/null 2>&1; then
-    echo "aws CLI not found. Install and configure AWS credentials." >&2
-    exit 2
-  fi
-}
-
-cmd_status(){
-  git rev-parse --abbrev-ref HEAD || true
-  git status --short || true
-  git log -1 --oneline || true
-}
 
 cmd_push(){
   echo "Pushing branch '$BRANCH' to origin..."
@@ -120,8 +156,14 @@ while [[ ${1:-} == --* ]]; do
   esac
 done
 
-cmd=${1:-help}
-shift || true
+cmd=${1:-}
+shift 1 2>/dev/null || true
+
+# If no command provided, run interactive menu (no help shown)
+if [ -z "${cmd}" ]; then
+  cmd_menu
+  exit 0
+fi
 
 case ${cmd} in
   help) usage ;; 

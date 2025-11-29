@@ -4,7 +4,7 @@
     {
       "Effect": "Allow",
       "Action": ["s3:PutObject", "s3:PutObjectAcl"],
-      "Resource": ["arn:aws:s3:::ECE334B3BE68", "arn:aws:s3:::ECE334B3BE68/*"]
+      "Resource": ["arn:aws:s3:::037151312069", "arn:aws:s3:::037151312069/*"]
     },
     {
       "Effect": "Allow",
