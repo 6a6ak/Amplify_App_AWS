@@ -219,8 +219,17 @@ app.get('/api/events', (req, res) => {
   // send a comment to keep connection alive
   res.write(': connected\n\n');
   sseClients.add(res);
+  // log connection and add a periodic keepalive ping to survive proxies
+  console.log('SSE client connected, total:', sseClients.size);
+  // send a lightweight comment ping every 15s to keep proxies from closing
+  const keepalive = setInterval(() => {
+    try { res.write(': ping\n\n'); } catch (e) { /* ignore */ }
+  }, 15000);
+
   req.on('close', () => {
+    clearInterval(keepalive);
     sseClients.delete(res);
+    console.log('SSE client disconnected, total:', sseClients.size);
   });
 });
 
