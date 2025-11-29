@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:PutObjectAcl"],
+      "Resource": ["arn:aws:s3:::ECE334B3BE68", "arn:aws:s3:::ECE334B3BE68/*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["dynamodb:PutItem", "dynamodb:UpdateItem"],
+      "Resource": [
+        "arn:aws:dynamodb:eu-central-1:037151312069:table/ECE334B3BE68"
+      ]
+    }
+  ]
+}

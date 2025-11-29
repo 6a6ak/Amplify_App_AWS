@@ -1,0 +1,26 @@
+﻿{
+  "sql": "SELECT * FROM 'ECE334B3BE68/telemetry'",
+  "actions": [
+    {
+      "s3": {
+        "roleArn": "arn:aws:iam::/IoTRuleRole-ECE334B3BE68",
+        "bucketName": "ECE334B3BE68",
+        "key": "/.json"
+      }
+    },
+    {
+      "dynamoDBv2": {
+        "roleArn": "arn:aws:iam::/IoTRuleRole-ECE334B3BE68",
+        "putItem": {
+          "tableName": "ECE334B3BE68",
+          "item": {
+            "thingId": { "S": "" },
+            "timestamp": { "S": "" },
+            "payload": { "S": "" }
+          }
+        }
+      }
+    }
+  ],
+  "ruleDisabled": false
+}
