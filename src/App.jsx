@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Esp32Info from './components/Esp32Info';
 
 export default function App() {
   const [items, setItems] = useState([]);
@@ -28,6 +29,8 @@ export default function App() {
           <li key={i}>{it}</li>
         ))}
       </ul>
+
+      <Esp32Info />
     </div>
   );
 }
