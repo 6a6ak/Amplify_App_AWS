@@ -6,6 +6,14 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
+// Simple request logging for debugging frontend requests
+app.use((req, res, next) => {
+  try {
+    console.log(`[req] ${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
+  } catch (e) {}
+  next();
+});
+
 // AWS SDK for DynamoDB access
 const AWS = require('aws-sdk');
 const region = process.env.AWS_REGION || 'eu-central-1';
@@ -284,7 +292,7 @@ app.get('/api/devices/:id/shadow', async (req, res) => {
     const shadow = await getShadow(deviceId);
     const now = Date.now();
     if (shadow) {
-      // derive online from reported.lastSeen if present
+      // try to derive online from reported.lastSeen if present
       let online = null;
       try {
         const rep = shadow.state && shadow.state.reported;
@@ -292,6 +300,32 @@ app.get('/api/devices/:id/shadow', async (req, res) => {
           online = ((now - rep.lastSeen) <= ONLINE_THRESHOLD_MS);
         }
       } catch (e) { /* ignore */ }
+
+      // If shadow exists but doesn't include lastSeen, fall back to MQTT in-memory status
+      if (online === null) {
+        const s = lastStatusByDevice.get(deviceId);
+        if (s && typeof s.online === 'boolean') {
+          online = s.online;
+        } else {
+          // final attempt: look up latest telemetry in DynamoDB to infer online
+          try {
+            const params = {
+              TableName: DDB_TABLE,
+              KeyConditionExpression: 'device_id = :d',
+              ExpressionAttributeValues: { ':d': deviceId },
+              ScanIndexForward: false,
+              Limit: 1
+            };
+            const data = await ddb.query(params).promise();
+            const item = (data.Items && data.Items[0]) || null;
+            const lastSeen = item ? (item.timestamp || null) : null;
+            online = lastSeen ? ((now - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
+          } catch (ddbErr) {
+            // if DDB lookup fails, leave online null
+          }
+        }
+      }
+
       return res.json({ device_id: deviceId, shadow, online, source: 'shadow' });
     }
 
