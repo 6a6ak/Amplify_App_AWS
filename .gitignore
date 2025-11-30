@@ -21,3 +21,7 @@ Cert/Developer_credentials.csv
 .gitignore
 aws_iotcore_esp32/secrets.h
 aws_iotcore_esp32/secrets_old.h
+dev_server.log
+server.log
+dev_server.log
+dev_server.log

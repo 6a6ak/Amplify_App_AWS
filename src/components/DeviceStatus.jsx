@@ -71,7 +71,14 @@ export default function DeviceStatus({ apiBase = '' }) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <strong>{d.device_id}</strong>
-                <div style={{ fontSize: 12, color: '#666' }}>lastSeen: {d.lastSeen ? new Date(d.lastSeen).toLocaleString() : '—'}</div>
+                <div style={{ fontSize: 12, color: '#666' }}>
+                  lastSeen: {d.lastSeen ? new Date(d.lastSeen).toLocaleString() : '—'}
+                  {d.lastItem && typeof d.lastItem.temperature !== 'undefined' && (
+                    <span style={{ marginLeft: 12 }}>
+                      • Temp: <strong>{d.lastItem.temperature}{typeof d.lastItem.temperature === 'number' ? '°C' : ''}</strong>
+                    </span>
+                  )}
+                </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{
