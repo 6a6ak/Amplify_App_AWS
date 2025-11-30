@@ -404,6 +404,46 @@ if (!process.env.LAMBDA_TASK_ROOT) {
   app.listen(port, () => console.log(`ESP32 info server running on http://localhost:${port}`));
 }
 
+// Admin: force a device to offline immediately (in-memory) and emit SSE
+app.post('/api/devices/:id/force-offline', (req, res) => {
+  const deviceId = req.params.id;
+  const ts = Date.now() - (ONLINE_THRESHOLD_MS + 1000);
+  // mark as offline in the in-memory map
+  lastStatusByDevice.set(deviceId, { lastSeen: ts, online: false });
+  // notify SSE clients so UI updates immediately
+  sendSse('status', { device_id: deviceId, lastSeen: ts, online: false, source: 'admin' });
+  return res.json({ device_id: deviceId, lastSeen: ts, online: false, updated: 'in-memory' });
+});
+
+// Admin: force device offline by updating Thing Shadow (persistent until device updates it)
+app.post('/api/devices/:id/force-offline-shadow', async (req, res) => {
+  const deviceId = req.params.id;
+  const now = Date.now();
+  const reported = { online: false, lastSeen: now };
+  const payload = { state: { reported } };
+  try {
+    await iotData.updateThingShadow({ thingName: deviceId, payload: Buffer.from(JSON.stringify(payload)) }).promise();
+    // also update in-memory map so UI updates immediately
+    const offlineTs = now - (ONLINE_THRESHOLD_MS + 1000);
+    lastStatusByDevice.set(deviceId, { lastSeen: offlineTs, online: false });
+    sendSse('status', { device_id: deviceId, lastSeen: offlineTs, online: false, source: 'shadow-admin' });
+    return res.json({ device_id: deviceId, updated: 'shadow', reported, result: 'ok' });
+  } catch (e) {
+    console.error('updateThingShadow failed', e && e.message);
+    return res.status(500).json({ error: 'updateThingShadow failed', detail: e && e.message });
+  }
+});
+
+// DEBUG endpoint: show in-memory lastStatusByDevice map (for troubleshooting)
+app.get('/api/internal/status-map', (req, res) => {
+  try {
+    const arr = Array.from(lastStatusByDevice.entries()).map(([k,v]) => ({ device_id: k, ...v }));
+    return res.json({ count: arr.length, items: arr });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = app;
 
 // DEBUG endpoint: show in-memory lastStatusByDevice map (for troubleshooting)
