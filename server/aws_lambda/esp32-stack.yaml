@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: esp32 data API (Lambda + API Gateway + API Key)
+Parameters:
+  DDBTableName:
+    Type: String
+    Default: ESP_Data
+Resources:
+  Esp32LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: Esp32DdbPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Scan
+                  - dynamodb:Query
+                  - dynamodb:GetItem
+                Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDBTableName}
+
+  Esp32LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: esp32-data-cf
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Role: !GetAtt Esp32LambdaRole.Arn
+      Timeout: 30
+      Environment:
+        Variables:
+          DDB_TABLE: !Ref DDBTableName
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const ddb = new AWS.DynamoDB.DocumentClient();
+          const DDB_TABLE = process.env.DDB_TABLE || 'ESP_Data';
+
+          exports.handler = async (event) => {
+            try {
+              const params = { TableName: DDB_TABLE };
+              const items = [];
+              let data;
+              do {
+                data = await ddb.scan(params).promise();
+                if (data.Items) items.push(...data.Items);
+                params.ExclusiveStartKey = data.LastEvaluatedKey;
+              } while (data.LastEvaluatedKey);
+
+              const latest = {};
+              for (const it of items) {
+                const id = it.device_id;
+                if (!latest[id] || (it.timestamp && latest[id].timestamp < it.timestamp)) latest[id] = it;
+              }
+              const devices = Object.keys(latest).map(k => ({ device_id: k, lastSeen: latest[k].timestamp, lastItem: latest[k] }));
+              return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ devices }) };
+            } catch (e) {
+              return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: e.message }) };
+            }
+          } 
+
+  Esp32Api:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: esp32-data-api-cf
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  Esp32DevicesResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref Esp32Api
+      ParentId: !GetAtt [Esp32Api, RootResourceId]
+      PathPart: devices
+
+  Esp32GetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref Esp32Api
+      ResourceId: !Ref Esp32DevicesResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Esp32LambdaFunction.Arn}/invocations
+
+  Esp32Deployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref Esp32Api
+      StageName: dev
+    DependsOn: Esp32GetMethod
+
+  Esp32ApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: esp32-data-key-cf
+      Enabled: true
+
+  Esp32UsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: esp32-data-usage-cf
+      ApiStages:
+        - ApiId: !Ref Esp32Api
+          Stage: dev
+
+  Esp32UsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref Esp32ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref Esp32UsagePlan
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref Esp32LambdaFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/GET/devices
+
+Outputs:
+  ApiEndpoint:
+    Description: URL for GET /devices
+    Value: !Sub https://${Esp32Api}.execute-api.${AWS::Region}.amazonaws.com/dev/devices
+  ApiKeyValue:
+    Description: API key value
+    Value: !Ref Esp32ApiKey
