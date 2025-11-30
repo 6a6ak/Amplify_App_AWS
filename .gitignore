@@ -27,3 +27,5 @@ dev_server.log
 dev_server.log
 Cert/inof.txt
 .gitignore
+server/.env
+server/.env
