@@ -1,4 +1,6 @@
 const express = require('express');
+// load local .env (not committed) for DATA_API_URL / DATA_API_KEY
+try { require('dotenv').config(); } catch (e) { /* dotenv optional in some envs */ }
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
