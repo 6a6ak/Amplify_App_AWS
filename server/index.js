@@ -34,6 +34,24 @@ const TOPIC_FILTER = process.env.STATUS_TOPIC_FILTER || '+/status';
 
 let mqttConnected = false;
 
+// IoT Data client for Device Shadow access (used for authoritative online/offline)
+const iotData = new AWS.IotData({ endpoint: IOT_ENDPOINT });
+
+async function getShadow(thingName) {
+  try {
+    const resp = await iotData.getThingShadow({ thingName }).promise();
+    if (resp && resp.payload) {
+      const payload = JSON.parse(resp.payload.toString());
+      return payload;
+    }
+    return null;
+  } catch (e) {
+    // ResourceNotFoundException or 404 means shadow doesn't exist
+    if (e.code === 'ResourceNotFoundException' || e.statusCode === 404) return null;
+    throw e;
+  }
+}
+
 // Prefer v2 SDK if available, otherwise fall back to v1 (aws-iot-device-sdk)
 try {
   const iot = require('aws-iot-device-sdk-v2');
@@ -219,17 +237,8 @@ app.get('/api/events', (req, res) => {
   // send a comment to keep connection alive
   res.write(': connected\n\n');
   sseClients.add(res);
-  // log connection and add a periodic keepalive ping to survive proxies
-  console.log('SSE client connected, total:', sseClients.size);
-  // send a lightweight comment ping every 15s to keep proxies from closing
-  const keepalive = setInterval(() => {
-    try { res.write(': ping\n\n'); } catch (e) { /* ignore */ }
-  }, 15000);
-
   req.on('close', () => {
-    clearInterval(keepalive);
     sseClients.delete(res);
-    console.log('SSE client disconnected, total:', sseClients.size);
   });
 });
 
@@ -268,6 +277,50 @@ app.get('/api/devices', async (req, res) => {
   }
 });
 
+// Return Thing Shadow or fallback to retained MQTT / DynamoDB-derived status
+app.get('/api/devices/:id/shadow', async (req, res) => {
+  const deviceId = req.params.id;
+  try {
+    const shadow = await getShadow(deviceId);
+    const now = Date.now();
+    if (shadow) {
+      // derive online from reported.lastSeen if present
+      let online = null;
+      try {
+        const rep = shadow.state && shadow.state.reported;
+        if (rep && typeof rep.lastSeen === 'number') {
+          online = ((now - rep.lastSeen) <= ONLINE_THRESHOLD_MS);
+        }
+      } catch (e) { /* ignore */ }
+      return res.json({ device_id: deviceId, shadow, online, source: 'shadow' });
+    }
+
+    // fallback to MQTT in-memory lastStatusByDevice
+    const s = lastStatusByDevice.get(deviceId);
+    if (s) return res.json({ device_id: deviceId, lastSeen: s.lastSeen, online: s.online, source: 'mqtt' });
+
+    // final fallback: query DynamoDB for latest timestamp for this device
+    try {
+      const params = {
+        TableName: DDB_TABLE,
+        KeyConditionExpression: 'device_id = :d',
+        ExpressionAttributeValues: { ':d': deviceId },
+        ScanIndexForward: false,
+        Limit: 1
+      };
+      const data = await ddb.query(params).promise();
+      const item = (data.Items && data.Items[0]) || null;
+      const lastSeen = item ? (item.timestamp || null) : null;
+      const online = lastSeen ? ((now - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
+      return res.json({ device_id: deviceId, lastSeen, online, source: 'ddb' });
+    } catch (ddbErr) {
+      return res.status(500).json({ error: 'DynamoDB query failed', detail: ddbErr.message });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: 'Shadow lookup failed', detail: err.message });
+  }
+});
+
 const port = process.env.PORT || 3333;
 // If a built frontend exists, serve it as static files so a single server serves both API and UI
 const staticPath = path.join(__dirname, '..', 'dist');
@@ -281,4 +334,8 @@ if (fs.existsSync(staticPath)) {
   });
 }
 
-app.listen(port, () => console.log(`ESP32 info server running on http://localhost:${port}`));
+if (!process.env.LAMBDA_TASK_ROOT) {
+  app.listen(port, () => console.log(`ESP32 info server running on http://localhost:${port}`));
+}
+
+module.exports = app;
