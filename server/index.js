@@ -18,10 +18,12 @@ app.use((req, res, next) => {
 
 // AWS SDK for DynamoDB access
 const AWS = require('aws-sdk');
+const axios = require('axios');
 const region = process.env.AWS_REGION || 'eu-central-1';
 AWS.config.update({ region });
 const ddb = new AWS.DynamoDB.DocumentClient();
 const DDB_TABLE = process.env.DDB_TABLE || 'ESP_Data';
+const DATA_API_URL = process.env.DATA_API_URL || null; // external API (API Gateway) base URL to fetch DynamoDB data
 // status tracking: map device_id -> { lastSeen: timestamp, online: bool }
 const lastStatusByDevice = new Map();
 const ONLINE_THRESHOLD_MS = Number(process.env.ONLINE_THRESHOLD_MS || 60000); // 60s default
@@ -224,6 +226,19 @@ app.get('/api/esp32/info', (req, res) => {
 app.get('/api/devices/:id', async (req, res) => {
   const deviceId = req.params.id;
   try {
+    // If an external API URL is configured, prefer fetching telemetry from that API
+    if (DATA_API_URL) {
+      try {
+        const url = `${DATA_API_URL.replace(/\/$/, '')}/devices/${encodeURIComponent(deviceId)}`;
+        const r = await axios.get(url, { timeout: 5000 });
+        // Assume the external API returns { device_id, items: [...] } or similar
+        return res.json(r.data);
+      } catch (apiErr) {
+        console.warn('External data API request failed, falling back to DynamoDB query', apiErr && apiErr.message);
+        // fallthrough to DynamoDB fallback
+      }
+    }
+
     const params = {
       TableName: DDB_TABLE,
       KeyConditionExpression: 'device_id = :d',
@@ -257,7 +272,30 @@ app.get('/api/events', (req, res) => {
 // easier: add a wrapper endpoint that proxies to the same logic but adds online field
 app.get('/api/devices', async (req, res) => {
   try {
-    // reuse previous logic: scan table and compute latest per device
+    // If external API provided, prefer it for device listing (assumes it returns { devices: [...] })
+    if (DATA_API_URL) {
+      try {
+        const url = `${DATA_API_URL.replace(/\/$/, '')}/devices`;
+        const r = await axios.get(url, { timeout: 5000 });
+        // augment returned devices with MQTT-derived online state when possible
+        if (r.data && Array.isArray(r.data.devices)) {
+          const now = Date.now();
+          const devices = r.data.devices.map(d => {
+            const s = lastStatusByDevice.get(d.device_id);
+            const online = s ? s.online : ((now - (d.lastSeen || (d.lastItem && d.lastItem.timestamp) || 0)) <= ONLINE_THRESHOLD_MS);
+            return Object.assign({}, d, { online });
+          });
+          return res.json({ devices });
+        }
+        // if external API returns a different shape, return raw
+        return res.json(r.data);
+      } catch (apiErr) {
+        console.warn('External data API request failed, falling back to DynamoDB scan', apiErr && apiErr.message);
+        // fallthrough to DynamoDB fallback
+      }
+    }
+
+    // fallback: reuse previous logic: scan table and compute latest per device
     const params = { TableName: DDB_TABLE };
     const items = [];
     let data;
@@ -291,49 +329,70 @@ app.get('/api/devices', async (req, res) => {
 app.get('/api/devices/:id/shadow', async (req, res) => {
   const deviceId = req.params.id;
   try {
-    const shadow = await getShadow(deviceId);
-    const now = Date.now();
-    if (shadow) {
-      // try to derive online from reported.lastSeen if present
-      let online = null;
-      try {
-        const rep = shadow.state && shadow.state.reported;
-        if (rep && typeof rep.lastSeen === 'number') {
-          online = ((now - rep.lastSeen) <= ONLINE_THRESHOLD_MS);
-        }
-      } catch (e) { /* ignore */ }
-
-      // If shadow exists but doesn't include lastSeen, fall back to MQTT in-memory status
-      if (online === null) {
-        const s = lastStatusByDevice.get(deviceId);
-        if (s && typeof s.online === 'boolean') {
-          online = s.online;
-        } else {
-          // final attempt: look up latest telemetry in DynamoDB to infer online
-          try {
-            const params = {
-              TableName: DDB_TABLE,
-              KeyConditionExpression: 'device_id = :d',
-              ExpressionAttributeValues: { ':d': deviceId },
-              ScanIndexForward: false,
-              Limit: 1
-            };
-            const data = await ddb.query(params).promise();
-            const item = (data.Items && data.Items[0]) || null;
-            const lastSeen = item ? (item.timestamp || null) : null;
-            online = lastSeen ? ((now - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
-          } catch (ddbErr) {
-            // if DDB lookup fails, leave online null
-          }
-        }
-      }
-
-      return res.json({ device_id: deviceId, shadow, online, source: 'shadow' });
+    // Prefer MQTT in-memory status for online/offline
+    const s = lastStatusByDevice.get(deviceId);
+    if (s) {
+      // also attempt to include shadow if present for richer state, but online comes from mqtt
+      let shadow = null;
+      try { shadow = await getShadow(deviceId); } catch (e) { /* ignore */ }
+      return res.json({ device_id: deviceId, lastSeen: s.lastSeen, online: s.online, source: 'mqtt', shadow });
     }
 
-    // fallback to MQTT in-memory lastStatusByDevice
-    const s = lastStatusByDevice.get(deviceId);
-    if (s) return res.json({ device_id: deviceId, lastSeen: s.lastSeen, online: s.online, source: 'mqtt' });
+    // If MQTT has no info, try shadow
+    try {
+      const shadow = await getShadow(deviceId);
+      if (shadow) {
+        const now = Date.now();
+        let online = null;
+        try {
+          const rep = shadow.state && shadow.state.reported;
+          if (rep && typeof rep.lastSeen === 'number') online = ((now - rep.lastSeen) <= ONLINE_THRESHOLD_MS);
+        } catch (e) {}
+        // if still unknown, attempt to use external API or DynamoDB to infer
+        if (online === null) {
+          // attempt external API for latest telemetry
+          if (DATA_API_URL) {
+            try {
+              const url = `${DATA_API_URL.replace(/\/$/, '')}/devices/${encodeURIComponent(deviceId)}`;
+              const r = await axios.get(url, { timeout: 5000 });
+              const lastSeen = (r.data && (r.data.lastSeen || (r.data.lastItem && r.data.lastItem.timestamp))) || null;
+              if (lastSeen) online = ((Date.now() - lastSeen) <= ONLINE_THRESHOLD_MS);
+            } catch (e) { /* ignore */ }
+          }
+          if (online === null) {
+            try {
+              const params = {
+                TableName: DDB_TABLE,
+                KeyConditionExpression: 'device_id = :d',
+                ExpressionAttributeValues: { ':d': deviceId },
+                ScanIndexForward: false,
+                Limit: 1
+              };
+              const data = await ddb.query(params).promise();
+              const item = (data.Items && data.Items[0]) || null;
+              const lastSeen = item ? (item.timestamp || null) : null;
+              online = lastSeen ? ((Date.now() - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
+            } catch (ddbErr) { online = false; }
+          }
+        }
+        return res.json({ device_id: deviceId, shadow, online, source: 'shadow' });
+      }
+    } catch (e) {
+      // ignore shadow errors and continue to fallback
+    }
+
+    // final fallback: try external API for telemetry if configured
+    if (DATA_API_URL) {
+      try {
+        const url = `${DATA_API_URL.replace(/\/$/, '')}/devices/${encodeURIComponent(deviceId)}`;
+        const r = await axios.get(url, { timeout: 5000 });
+        const lastSeen = (r.data && (r.data.lastSeen || (r.data.lastItem && r.data.lastItem.timestamp))) || null;
+        const online = lastSeen ? ((Date.now() - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
+        return res.json({ device_id: deviceId, lastSeen, online, source: 'external-api', data: r.data });
+      } catch (e) {
+        // external api failed, fallthrough to ddb
+      }
+    }
 
     // final fallback: query DynamoDB for latest timestamp for this device
     try {
@@ -347,7 +406,7 @@ app.get('/api/devices/:id/shadow', async (req, res) => {
       const data = await ddb.query(params).promise();
       const item = (data.Items && data.Items[0]) || null;
       const lastSeen = item ? (item.timestamp || null) : null;
-      const online = lastSeen ? ((now - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
+      const online = lastSeen ? ((Date.now() - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
       return res.json({ device_id: deviceId, lastSeen, online, source: 'ddb' });
     } catch (ddbErr) {
       return res.status(500).json({ error: 'DynamoDB query failed', detail: ddbErr.message });
