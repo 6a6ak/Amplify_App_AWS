@@ -24,6 +24,20 @@ AWS.config.update({ region });
 const ddb = new AWS.DynamoDB.DocumentClient();
 const DDB_TABLE = process.env.DDB_TABLE || 'ESP_Data';
 const DATA_API_URL = process.env.DATA_API_URL || null; // external API (API Gateway) base URL to fetch DynamoDB data
+const DATA_API_KEY = process.env.DATA_API_KEY || null; // optional x-api-key for API Gateway
+
+// Helper to try fetching an external URL and return parsed data or null
+async function tryFetchUrl(url) {
+  try {
+    const opts = { timeout: 5000 };
+    if (DATA_API_KEY) opts.headers = { 'x-api-key': DATA_API_KEY };
+    const r = await axios.get(url, opts);
+    if (r && r.status >= 200 && r.status < 300) return r.data;
+  } catch (e) {
+    // ignore and return null to allow fallback attempts
+  }
+  return null;
+}
 // status tracking: map device_id -> { lastSeen: timestamp, online: bool }
 const lastStatusByDevice = new Map();
 const ONLINE_THRESHOLD_MS = Number(process.env.ONLINE_THRESHOLD_MS || 60000); // 60s default
@@ -229,10 +243,24 @@ app.get('/api/devices/:id', async (req, res) => {
     // If an external API URL is configured, prefer fetching telemetry from that API
     if (DATA_API_URL) {
       try {
-        const url = `${DATA_API_URL.replace(/\/$/, '')}/devices/${encodeURIComponent(deviceId)}`;
-        const r = await axios.get(url, { timeout: 5000 });
-        // Assume the external API returns { device_id, items: [...] } or similar
-        return res.json(r.data);
+        const base = DATA_API_URL.replace(/\/$/, '');
+        const candidates = [
+          `${base}/devices/${encodeURIComponent(deviceId)}`,
+          `${base}/${encodeURIComponent(deviceId)}`,
+          base
+        ];
+        for (const c of candidates) {
+          const ok = await tryFetchUrl(c);
+          if (ok) {
+            // if it looks like { device_id, items }
+            if (ok.items || ok.device_id) return res.json(ok);
+            // if it's an array, wrap
+            if (Array.isArray(ok)) return res.json({ device_id: deviceId, items: ok });
+            // otherwise return whatever we got
+            return res.json(ok);
+          }
+        }
+        console.warn('External data API did not return usable device data, falling back to DynamoDB');
       } catch (apiErr) {
         console.warn('External data API request failed, falling back to DynamoDB query', apiErr && apiErr.message);
         // fallthrough to DynamoDB fallback
@@ -275,20 +303,41 @@ app.get('/api/devices', async (req, res) => {
     // If external API provided, prefer it for device listing (assumes it returns { devices: [...] })
     if (DATA_API_URL) {
       try {
-        const url = `${DATA_API_URL.replace(/\/$/, '')}/devices`;
-        const r = await axios.get(url, { timeout: 5000 });
-        // augment returned devices with MQTT-derived online state when possible
-        if (r.data && Array.isArray(r.data.devices)) {
-          const now = Date.now();
-          const devices = r.data.devices.map(d => {
-            const s = lastStatusByDevice.get(d.device_id);
-            const online = s ? s.online : ((now - (d.lastSeen || (d.lastItem && d.lastItem.timestamp) || 0)) <= ONLINE_THRESHOLD_MS);
-            return Object.assign({}, d, { online });
-          });
-          return res.json({ devices });
+        const base = DATA_API_URL.replace(/\/$/, '');
+        // try common candidate URLs in order
+        const candidates = [
+          `${base}/devices`,
+          base
+        ];
+        let ok = null;
+        for (const c of candidates) {
+          ok = await tryFetchUrl(c);
+          if (ok) {
+            // if the response is an object with devices array, use it
+            if (Array.isArray(ok.devices)) {
+              const now = Date.now();
+              const devices = ok.devices.map(d => {
+                const s = lastStatusByDevice.get(d.device_id);
+                const online = s ? s.online : ((now - (d.lastSeen || (d.lastItem && d.lastItem.timestamp) || 0)) <= ONLINE_THRESHOLD_MS);
+                return Object.assign({}, d, { online });
+              });
+              return res.json({ devices });
+            }
+            // if it's already an array of devices
+            if (Array.isArray(ok)) {
+              const now = Date.now();
+              const devices = ok.map(d => {
+                const s = lastStatusByDevice.get(d.device_id);
+                const online = s ? s.online : ((now - (d.lastSeen || (d.lastItem && d.lastItem.timestamp) || 0)) <= ONLINE_THRESHOLD_MS);
+                return Object.assign({}, d, { online });
+              });
+              return res.json({ devices });
+            }
+            // otherwise return raw
+            return res.json(ok);
+          }
         }
-        // if external API returns a different shape, return raw
-        return res.json(r.data);
+        console.warn('External data API did not return usable data, falling back to DynamoDB');
       } catch (apiErr) {
         console.warn('External data API request failed, falling back to DynamoDB scan', apiErr && apiErr.message);
         // fallthrough to DynamoDB fallback
