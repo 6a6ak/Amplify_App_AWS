@@ -1,0 +1,50 @@
+2025-12-01T12:18:12.380Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-12-01T12:18:13.072Z [INFO]: # Cloning repository: git@github.com:6a6ak/Amplify_App_AWS.git
+2025-12-01T12:18:15.857Z [INFO]: 
+2025-12-01T12:18:15.946Z [INFO]: Cloning into 'Amplify_App_AWS'...
+2025-12-01T12:18:15.946Z [INFO]: # Checking for Git submodules at: /codebuild/output/src3514515701/src/Amplify_App_AWS/.gitmodules
+2025-12-01T12:18:15.953Z [INFO]: # Retrieving environment cache...
+2025-12-01T12:18:15.991Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-12-01T12:18:15.992Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-12-01T12:18:15.992Z [INFO]: SSM params {"Path":"/amplify/d2ityfzyxzknpd/release/","WithDecryption":true}
+2025-12-01T12:18:16.033Z [WARNING]: !Failed to set up process.env.secrets
+2025-12-01T12:18:16.794Z [INFO]: # No package override configuration found.
+2025-12-01T12:18:16.798Z [INFO]: # Retrieving cache...
+2025-12-01T12:18:16.838Z [INFO]: # Retrieved cache
+2025-12-01T12:18:22.235Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-12-01T12:18:22.241Z [INFO]: ## Starting Frontend Build
+                                 # Starting phase: preBuild
+2025-12-01T12:18:22.242Z [INFO]: # Executing command: npm install
+2025-12-01T12:19:00.154Z [INFO]: added 372 packages, and audited 373 packages in 33s
+2025-12-01T12:19:00.160Z [INFO]: 19 packages are looking for funding
+                                 run `npm fund` for details
+2025-12-01T12:19:00.170Z [INFO]: 3 moderate severity vulnerabilities
+                                 To address issues that do not require attention, run:
+                                 npm audit fix
+                                 To address all issues (including breaking changes), run:
+                                 npm audit fix --force
+                                 Run `npm audit` for details.
+2025-12-01T12:19:00.185Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+                                 # Executing command: npm run build
+2025-12-01T12:19:00.285Z [INFO]: > amplify-app-aws@0.1.0 build
+                                 > vite build --config vite.config.mjs
+2025-12-01T12:19:01.252Z [INFO]: vite v4.5.14 building for production...
+2025-12-01T12:19:01.280Z [INFO]: transforming...
+2025-12-01T12:19:01.362Z [INFO]: ✓ 6 modules transformed.
+2025-12-01T12:19:01.362Z [INFO]: ✓ built in 109ms
+2025-12-01T12:19:01.362Z [WARNING]: Could not resolve "../amplify_outputs.json" from "src/main.tsx"
+                                    file: /codebuild/output/src3514515701/src/Amplify_App_AWS/src/main.tsx
+2025-12-01T12:19:01.364Z [WARNING]: error during build:
+                                    RollupError: Could not resolve "../amplify_outputs.json" from "src/main.tsx"
+                                    at error (file:///codebuild/output/src3514515701/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:2287:30)
+                                    at ModuleLoader.handleInvalidResolvedId (file:///codebuild/output/src3514515701/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:24860:24)
+                                    at file:///codebuild/output/src3514515701/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:24822:26
+2025-12-01T12:19:01.375Z [ERROR]: !!! Build failed
+2025-12-01T12:19:01.375Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-12-01T12:19:01.375Z [INFO]: # Starting environment caching...
+2025-12-01T12:19:01.375Z [INFO]: # Environment caching completed
+

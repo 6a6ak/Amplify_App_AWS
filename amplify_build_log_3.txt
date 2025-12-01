@@ -1,0 +1,77 @@
+2025-12-01T12:48:20.898Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-12-01T12:48:21.527Z [INFO]: # Cloning repository: git@github.com:6a6ak/Amplify_App_AWS.git
+2025-12-01T12:48:24.178Z [INFO]: 
+2025-12-01T12:48:24.278Z [INFO]: Cloning into 'Amplify_App_AWS'...
+2025-12-01T12:48:24.278Z [INFO]: # Switching to commit: ebce0493c5500b4a9692854dcf1b4a0ebdf7643f
+2025-12-01T12:48:24.528Z [INFO]: Note: switching to 'ebce0493c5500b4a9692854dcf1b4a0ebdf7643f'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at ebce049 fix(build): add minimal amplify data client + schema shim for CI
+2025-12-01T12:48:24.568Z [INFO]: Successfully cleaned up Git credentials
+2025-12-01T12:48:24.569Z [INFO]: # Checking for Git submodules at: /codebuild/output/src1772394989/src/Amplify_App_AWS/.gitmodules
+2025-12-01T12:48:24.575Z [INFO]: # Retrieving environment cache...
+2025-12-01T12:48:24.608Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-12-01T12:48:24.609Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-12-01T12:48:24.609Z [INFO]: SSM params {"Path":"/amplify/d2ityfzyxzknpd/release/","WithDecryption":true}
+2025-12-01T12:48:24.654Z [WARNING]: !Failed to set up process.env.secrets
+2025-12-01T12:48:25.420Z [INFO]: # No package override configuration found.
+2025-12-01T12:48:25.426Z [INFO]: # Retrieving cache...
+2025-12-01T12:48:25.456Z [INFO]: # Retrieved cache
+2025-12-01T12:48:30.497Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-12-01T12:48:30.503Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: npm install
+2025-12-01T12:49:04.796Z [INFO]: added 372 packages, and audited 373 packages in 29s
+2025-12-01T12:49:04.801Z [INFO]: 19 packages are looking for funding
+                                 run `npm fund` for details
+2025-12-01T12:49:04.812Z [INFO]: 3 moderate severity vulnerabilities
+                                 To address issues that do not require attention, run:
+                                 npm audit fix
+                                 To address all issues (including breaking changes), run:
+                                 npm audit fix --force
+                                 Run `npm audit` for details.
+2025-12-01T12:49:04.827Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+2025-12-01T12:49:04.827Z [INFO]: # Executing command: npm run build
+2025-12-01T12:49:04.926Z [INFO]: > amplify-app-aws@0.1.0 build
+                                 > vite build --config vite.config.mjs
+2025-12-01T12:49:05.813Z [INFO]: vite v4.5.14 building for production...
+2025-12-01T12:49:05.840Z [INFO]: transforming...
+2025-12-01T12:49:09.443Z [INFO]: ✓ 1838 modules transformed.
+2025-12-01T12:49:09.449Z [INFO]: ✓ built in 3.63s
+2025-12-01T12:49:09.449Z [WARNING]: "generateClient" is not exported by "amplify/data/client.ts", imported by "src/App.tsx".
+                                    file: /codebuild/output/src1772394989/src/Amplify_App_AWS/src/App.tsx:3:9
+                                    1: import { useEffect, useState } from "react";
+                                    2: import type { Schema } from "../amplify/data/resource";
+                                    3: import { generateClient } from "../amplify/data/client";
+                                    ^
+                                    4:
+                                    5: import {
+                                    error during build:
+                                    RollupError: "generateClient" is not exported by "amplify/data/client.ts", imported by "src/App.tsx".
+                                    at error (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:2287:30)
+                                    at Module.error (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:13745:16)
+                                    at Module.traceVariable (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:14175:29)
+                                    at ModuleScope.findVariable (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:12615:39)
+                                    at Identifier.bind (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:8319:40)
+                                    at CallExpression.bind (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:5892:23)
+                                    at CallExpression.bind (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:9890:15)
+                                    at VariableDeclarator.bind (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:5892:23)
+                                    at VariableDeclaration.bind (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:5888:28)
+                                    at Program.bind (file:///codebuild/output/src1772394989/src/Amplify_App_AWS/node_modules/rollup/dist/es/shared/node-entry.js:5888:28)
+2025-12-01T12:49:09.527Z [ERROR]: !!! Build failed
+2025-12-01T12:49:09.527Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-12-01T12:49:09.527Z [INFO]: # Starting environment caching...
+2025-12-01T12:49:09.527Z [INFO]: # Environment caching completed
+
