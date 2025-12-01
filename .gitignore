@@ -29,3 +29,5 @@ Cert/inof.txt
 .gitignore
 server/.env
 server/.env
+.git.zip
+.gitignore
