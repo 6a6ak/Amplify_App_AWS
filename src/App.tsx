@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "../amplify/data/client";
+import outputs from "../amplify_outputs.json";
 
 import {
   Badge,
@@ -19,7 +20,23 @@ const client = generateClient<Schema>();
 
 function App() {
 
-  const { user, signOut } = useAuthenticator();
+  // Determine whether Auth is configured (matches logic in `main.tsx`).
+  const hasAuthConfigured = !!(
+    outputs && outputs.auth && typeof outputs.auth.user_pool_id === 'string' &&
+    !outputs.auth.user_pool_id.includes('PLACEHOLDER')
+  );
+
+  let user: any = undefined;
+  let signOut = () => {};
+  if (hasAuthConfigured) {
+    const auth = useAuthenticator();
+    user = auth.user;
+    signOut = auth.signOut;
+  } else {
+    // Provide a minimal guest user so UI can render without Authenticator.
+    user = { signInDetails: { loginId: 'public' }, userId: 'public' };
+    signOut = () => { /* noop for guest */ };
+  }
 
   const [devices, setDevices] = useState<Array<Schema["Devices"]["type"]>>([]);
   useEffect(() => {
