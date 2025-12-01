@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite --config vite.config.mjs",
-    "build": "vite build --config vite.config.mjs",
-    "preview": "vite preview --config vite.config.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "start:prod": "npm run build && node server/index.js",
     "serve": "npm run start:prod"
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "@aws-amplify/ui-react": "^6.0.0",
+    "aws-amplify": "^6.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.1",

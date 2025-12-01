@@ -1,14 +1,15 @@
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "dynamodb:Scan",
-        "dynamodb:Query",
-        "dynamodb:GetItem"
-      ],
-      "Resource": "arn:aws:dynamodb:eu-central-1:037151312069:table/ESP_Data"
-    }
-  ]
+﻿{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"dynamodb:Scan",
+				"dynamodb:Query",
+				"dynamodb:GetItem"
+			],
+			"Resource": "arn:aws:dynamodb:eu-central-1:037151312069:table/ESP_Data"
+		}
+	]
 }
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["dynamodb:Scan","dynamodb:Query","dynamodb:GetItem"],"Resource":"arn:aws:dynamodb:eu-central-1:037151312069:table/ESP_Data"}]}
