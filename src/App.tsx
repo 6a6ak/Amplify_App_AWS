@@ -16,6 +16,8 @@ import {
   Text
 } from '@aws-amplify/ui-react';
 
+import ErrorBoundary from './ErrorBoundary';
+
 const client = generateClient<Schema>();
 
 function App() {
@@ -25,6 +27,10 @@ function App() {
     outputs && outputs.auth && typeof outputs.auth.user_pool_id === 'string' &&
     !outputs.auth.user_pool_id.includes('PLACEHOLDER')
   );
+
+  // Quick runtime telemetry to help debugging blank pages in production.
+  // This will appear in the browser console when the app mounts.
+  console.log('App initializing', { hasAuthConfigured, VITE_DATA_API_URL: (import.meta as any).env?.VITE_DATA_API_URL });
 
   let user: any = undefined;
   let signOut = () => {};
@@ -56,6 +62,7 @@ function App() {
 
 
   return (
+    <ErrorBoundary>
     <main>
       <h1>{user?.signInDetails?.loginId}'s Devices</h1>
       <Divider padding="xs" />
@@ -113,6 +120,7 @@ function App() {
       <View padding="xs"></View>
       <button onClick={signOut}>Sign out</button>
     </main>
+    </ErrorBoundary>
   );
 }
 
