@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "../amplify/data/client";
+import { generateClient } from "./amplify/data/client";
 import outputs from "../amplify_outputs.json";
 
 import {
