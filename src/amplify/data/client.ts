@@ -3,15 +3,44 @@
 // `/api` endpoints without requiring full Amplify DataStore codegen.
 
 export function generateClient<T = any>() {
-  // Resolve base URL from Vite environment (injected at build time) or
-  // fallback to empty string to use same-origin `/api` paths.
+  // Resolve base URL from Vite environment (injected at build time).
+  // If not set, fall back to local `/api/devices` endpoint.
   const meta: any = (import.meta as any) || {};
   const BASE = meta.env && meta.env.VITE_DATA_API_URL ? String(meta.env.VITE_DATA_API_URL).replace(/\/$/, '') : '';
   const API_KEY = meta.env && meta.env.VITE_DATA_API_KEY ? String(meta.env.VITE_DATA_API_KEY) : null;
 
-  function buildUrl(path: string) {
-    if (!BASE) return path.startsWith('/') ? path : `/${path}`;
-    return `${BASE}${path.startsWith('/') ? '' : '/'}${path}`;
+  async function fetchDevices() {
+    // If a VITE_DATA_API_URL is configured, call the external API Gateway
+    // which is expected to return `{ devices: [...] }` on POST.
+    if (BASE) {
+      try {
+        const res = await fetch(BASE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(API_KEY ? { 'x-api-key': API_KEY } : {})
+          },
+          body: JSON.stringify({})
+        });
+        const json = await res.json();
+        if (Array.isArray(json.devices)) return json.devices;
+        if (Array.isArray(json)) return json;
+        return [];
+      } catch (e) {
+        // fall through to local fallback
+      }
+    }
+
+    // Fallback: use local Node server `/api/devices` if running
+    try {
+      const res = await fetch('/api/devices');
+      const json = await res.json();
+      if (Array.isArray(json.devices)) return json.devices;
+      if (Array.isArray(json)) return json;
+      return [];
+    } catch (e) {
+      return [];
+    }
   }
 
   function headersJson() {
@@ -25,22 +54,24 @@ export function generateClient<T = any>() {
       Devices: {
         observeQuery: () => ({
           subscribe: ({ next }: any) => {
-            // Fetch devices once and emit initial items.
-            fetch(buildUrl('/devices'), { headers: API_KEY ? { 'x-api-key': API_KEY } : undefined })
-              .then((r) => r.json())
-              .then((d) => {
-                const items = d && d.devices ? d.devices : (Array.isArray(d) ? d : []);
+            fetchDevices()
+              .then((items) => {
                 try { next({ items }); } catch (e) { /* ignore */ }
               })
-              .catch(() => { try { next({ items: [] }); } catch (e) {} });
+              .catch(() => {
+                try { next({ items: [] }); } catch (e) {}
+              });
             return { unsubscribe() {} };
           }
         }),
         create: (obj: any) => {
-          return fetch(buildUrl('/devices'), { method: 'POST', headers: headersJson(), body: JSON.stringify(obj)}).catch(()=>{});
+          // When using external API Gateway, there may be a different endpoint
+          // for creation; for now, only support local `/api/devices` create.
+          return fetch('/api/devices', { method: 'POST', headers: headersJson(), body: JSON.stringify(obj)}).catch(()=>{});
         },
         delete: (obj: any) => {
-          return fetch(buildUrl(`/devices/${encodeURIComponent(obj.device_id)}`), { method: 'DELETE', headers: API_KEY ? { 'x-api-key': API_KEY } : undefined }).catch(()=>{});
+          // Likewise, support delete only on local server for now.
+          return fetch(`/api/devices/${encodeURIComponent(obj.device_id)}`, { method: 'DELETE', headers: headersJson() }).catch(()=>{});
         }
       }
     }
