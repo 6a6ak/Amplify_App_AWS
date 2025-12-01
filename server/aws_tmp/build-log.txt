@@ -1,0 +1,89 @@
+2025-12-01T11:49:12.172Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-12-01T11:49:12.823Z [INFO]: # Cloning repository: git@github.com:6a6ak/Amplify_App_AWS.git
+2025-12-01T11:49:16.089Z [INFO]: 
+2025-12-01T11:49:16.170Z [INFO]: Cloning into 'Amplify_App_AWS'...
+2025-12-01T11:49:16.170Z [INFO]: # Checking for Git submodules at: /codebuild/output/src344986579/src/Amplify_App_AWS/.gitmodules
+2025-12-01T11:49:16.177Z [INFO]: # Retrieving environment cache...
+2025-12-01T11:49:16.289Z [INFO]: # Retrieved environment cache
+2025-12-01T11:49:16.289Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-12-01T11:49:16.289Z [INFO]: SSM params {"Path":"/amplify/ddhdykrrt63i6/release/","WithDecryption":true}
+2025-12-01T11:49:16.336Z [WARNING]: !Failed to set up process.env.secrets
+2025-12-01T11:49:17.152Z [INFO]: # No package override configuration found.
+2025-12-01T11:49:17.156Z [INFO]: # Retrieving cache...
+2025-12-01T11:49:17.634Z [INFO]: # Extracting cache...
+2025-12-01T11:49:18.327Z [INFO]: # Extraction completed
+2025-12-01T11:49:18.335Z [INFO]: # Retrieved cache
+2025-12-01T11:49:23.702Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-12-01T11:49:23.708Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: npm install
+2025-12-01T11:50:03.366Z [INFO]: added 310 packages, and audited 373 packages in 34s
+2025-12-01T11:50:03.375Z [INFO]: 19 packages are looking for funding
+                                 run `npm fund` for details
+2025-12-01T11:50:03.376Z [INFO]: 3 moderate severity vulnerabilities
+                                 To address issues that do not require attention, run:
+                                 npm audit fix
+                                 To address all issues (including breaking changes), run:
+                                 npm audit fix --force
+                                 Run `npm audit` for details.
+2025-12-01T11:50:03.392Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+                                 # Executing command: npm run build
+2025-12-01T11:50:03.495Z [INFO]: > amplify-app-aws@0.1.0 build
+                                 > vite build
+2025-12-01T11:50:03.774Z [WARNING]: ✘ [ERROR] "@vitejs/plugin-react" resolved to an ESM file. ESM file cannot be loaded by `require`. See http://vitejs.dev/guide/troubleshooting.html#this-package-is-esm-only for more details. [plugin externalize-deps]
+                                    node_modules/vite/node_modules/esbuild/lib/main.js:1373:27:
+                                    1373 │         let result = await callback({
+                                    ╵                            ^
+                                    at file:///codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/dist/node/chunks/dep-827b23df.js:66612:35
+                                    at requestCallbacks.on-resolve (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:1373:28)
+                                    at handleRequest (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:729:19)
+                                    at handleIncomingPacket (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:755:7)
+                                    at Socket.readFromStdout (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:679:7)
+                                    at Socket.emit (node:events:518:28)
+                                    at addChunk (node:internal/streams/readable:561:12)
+                                    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+                                    at Readable.push (node:internal/streams/readable:392:5)
+                                    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+                                    This error came from the "onResolve" callback registered here:
+                                    node_modules/vite/node_modules/esbuild/lib/main.js:1292:20:
+                                    1292 │       let promise = setup({
+                                    ╵                     ^
+                                    at setup (file:///codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/dist/node/chunks/dep-827b23df.js:66578:27)
+                                    at handlePlugins (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:1292:21)
+                                    at buildOrContextImpl (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:978:5)
+                                    at Object.buildOrContext (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:786:5)
+                                    at /codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:2177:15
+                                    at new Promise (<anonymous>)
+                                    at Object.build (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:2176:25)
+                                    at build (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:2025:51)
+                                    at bundleConfigFile (file:///codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/dist/node/chunks/dep-827b23df.js:66529:26)
+                                    The plugin "externalize-deps" was triggered by this import
+                                    vite.config.js:2:18:
+                                    2 │ import react from '@vitejs/plugin-react';
+                                    ╵                   ~~~~~~~~~~~~~~~~~~~~~~
+2025-12-01T11:50:04.487Z [WARNING]: failed to load config from /codebuild/output/src344986579/src/Amplify_App_AWS/vite.config.js
+2025-12-01T11:50:04.488Z [WARNING]: error during build:
+                                    Error: Build failed with 1 error:
+                                    node_modules/vite/node_modules/esbuild/lib/main.js:1373:27: ERROR: [plugin: externalize-deps] "@vitejs/plugin-react" resolved to an ESM file. ESM file cannot be loaded by `require`. See http://vitejs.dev/guide/troubleshooting.html#this-package-is-esm-only for more details.
+                                    at failureErrorWithLog (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:1649:15)
+                                    at /codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:1058:25
+                                    at runOnEndCallbacks (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:1484:45)
+                                    at buildResponseToResult (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:1056:7)
+                                    at /codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:1085:16
+                                    at responseCallbacks.<computed> (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:703:9)
+                                    at handleIncomingPacket (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:762:9)
+                                    at Socket.readFromStdout (/codebuild/output/src344986579/src/Amplify_App_AWS/node_modules/vite/node_modules/esbuild/lib/main.js:679:7)
+                                    at Socket.emit (node:events:518:28)
+                                    at addChunk (node:internal/streams/readable:561:12)
+2025-12-01T11:50:04.499Z [ERROR]: !!! Build failed
+2025-12-01T11:50:04.499Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-12-01T11:50:04.499Z [INFO]: # Starting environment caching...
+2025-12-01T11:50:04.499Z [INFO]: # Uploading environment cache artifact...
+2025-12-01T11:50:04.585Z [INFO]: # Uploaded environment cache artifact
+2025-12-01T11:50:04.585Z [INFO]: # Environment caching completed
+
