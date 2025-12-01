@@ -1,0 +1,16 @@
+{
+  "version": "1",
+  "auth": {
+    "user_pool_id": "PLACEHOLDER_USER_POOL_ID",
+    "aws_region": "us-east-1",
+    "user_pool_client_id": "PLACEHOLDER_CLIENT_ID",
+    "identity_pool_id": "PLACEHOLDER_IDENTITY_POOL_ID"
+  },
+  "data": {
+    "url": "PLACEHOLDER_GRAPHQL_URL",
+    "aws_region": "us-east-1",
+    "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
+    "authorization_types": ["API_KEY"],
+    "api_key": "PLACEHOLDER_API_KEY"
+  }
+}
