@@ -3,13 +3,30 @@
 // `/api` endpoints without requiring full Amplify DataStore codegen.
 
 export function generateClient<T = any>() {
+  // Resolve base URL from Vite environment (injected at build time) or
+  // fallback to empty string to use same-origin `/api` paths.
+  const meta: any = (import.meta as any) || {};
+  const BASE = meta.env && meta.env.VITE_DATA_API_URL ? String(meta.env.VITE_DATA_API_URL).replace(/\/$/, '') : '';
+  const API_KEY = meta.env && meta.env.VITE_DATA_API_KEY ? String(meta.env.VITE_DATA_API_KEY) : null;
+
+  function buildUrl(path: string) {
+    if (!BASE) return path.startsWith('/') ? path : `/${path}`;
+    return `${BASE}${path.startsWith('/') ? '' : '/'}${path}`;
+  }
+
+  function headersJson() {
+    const h: Record<string,string> = { 'Content-Type': 'application/json' };
+    if (API_KEY) h['x-api-key'] = API_KEY;
+    return h;
+  }
+
   return {
     models: {
       Devices: {
         observeQuery: () => ({
           subscribe: ({ next }: any) => {
             // Fetch devices once and emit initial items.
-            fetch('/api/devices')
+            fetch(buildUrl('/devices'), { headers: API_KEY ? { 'x-api-key': API_KEY } : undefined })
               .then((r) => r.json())
               .then((d) => {
                 const items = d && d.devices ? d.devices : (Array.isArray(d) ? d : []);
@@ -20,10 +37,10 @@ export function generateClient<T = any>() {
           }
         }),
         create: (obj: any) => {
-          return fetch('/api/devices', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj)}).catch(()=>{});
+          return fetch(buildUrl('/devices'), { method: 'POST', headers: headersJson(), body: JSON.stringify(obj)}).catch(()=>{});
         },
         delete: (obj: any) => {
-          return fetch(`/api/devices/${encodeURIComponent(obj.device_id)}`, { method: 'DELETE' }).catch(()=>{});
+          return fetch(buildUrl(`/devices/${encodeURIComponent(obj.device_id)}`), { method: 'DELETE', headers: API_KEY ? { 'x-api-key': API_KEY } : undefined }).catch(()=>{});
         }
       }
     }
