@@ -118,12 +118,8 @@ function App() {
                       <div className="card-body py-3">
                         <div className="d-flex justify-content-between align-items-center mb-1">
                           <span className="text-uppercase text-info small">
-                            Device
-                          </span>
-                          <span className="text-muted small">ID</span>
-                        </div>
-                        <div className="fw-semibold small text-break mb-1">
-                          Device ID: {d.device_id}
+                       
+                          Device ID:</span> {d.device_id}
                           {d.lastItem?.name ? ` — ${d.lastItem.name}` : ""}
                         </div>
                         <div className="small text-muted mt-2">
