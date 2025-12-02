@@ -1,126 +1,158 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "./amplify/data/client";
-import outputs from "../amplify_outputs.json";
+import React, { useEffect, useState } from "react";
 
-import {
-  Badge,
-  Button,
-  Card,
-  Collection,
-  Divider,
-  Flex,
-  Heading,
-  useAuthenticator,
-  View,
-  Text
-} from '@aws-amplify/ui-react';
-
-import ErrorBoundary from './ErrorBoundary';
-
-const client = generateClient<Schema>();
+type Device = {
+  device_id: string;
+  lastSeen?: number;
+  lastItem?: any;
+};
 
 function App() {
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Determine whether Auth is configured (matches logic in `main.tsx`).
-  const hasAuthConfigured = !!(
-    outputs && outputs.auth && typeof outputs.auth.user_pool_id === 'string' &&
-    !outputs.auth.user_pool_id.includes('PLACEHOLDER')
-  );
-
-  // Quick runtime telemetry to help debugging blank pages in production.
-  // This will appear in the browser console when the app mounts.
-  console.log('App initializing', { hasAuthConfigured, VITE_DATA_API_URL: (import.meta as any).env?.VITE_DATA_API_URL });
-
-  let user: any = undefined;
-  let signOut = () => {};
-  if (hasAuthConfigured) {
-    const auth = useAuthenticator();
-    user = auth.user;
-    signOut = auth.signOut;
-  } else {
-    // Provide a minimal guest user so UI can render without Authenticator.
-    user = { signInDetails: { loginId: 'public' }, userId: 'public' };
-    signOut = () => { /* noop for guest */ };
-  }
-
-  const [devices, setDevices] = useState<Array<Schema["Devices"]["type"]>>([]);
   useEffect(() => {
-    client.models.Devices.observeQuery().subscribe({
-      next: (data) => { setDevices([...data.items]) },
-    });
+    async function load() {
+      try {
+        // Try external API Gateway if configured
+        const apiUrl = (import.meta as any)?.env?.VITE_DATA_API_URL as
+          | string
+          | undefined;
+        if (apiUrl) {
+          const res = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+          const json = await res.json();
+          const list = Array.isArray(json.devices) ? json.devices : [];
+          setDevices(list);
+        } else {
+          // Fallback to local Node server
+          const res = await fetch("/api/devices");
+          const json = await res.json();
+          const list = Array.isArray(json.devices) ? json.devices : [];
+          setDevices(list);
+        }
+      } catch (e: any) {
+        setError(e?.message || "Failed to load devices");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
   }, []);
 
-  function createDevice() {
-    const device = String(window.prompt("Device ID"));
-    client.models.Devices.create({ device_id: device, owner: user.userId })
-  }
-
-  function deleteDevice(device_id: string) {
-    client.models.Devices.delete({ device_id })
-  }
-
-
   return (
-    <ErrorBoundary>
-    <main>
-      <h1>{user?.signInDetails?.loginId}'s Devices</h1>
-      <Divider padding="xs" />
-      <h3>Devices</h3>
-      {
-        <Button
-          variation="primary"
-          loadingText=""
-          onClick={createDevice}
+    <div className="d-flex flex-column min-vh-100 bg-light text-dark pt-5">
+      <header>
+        <nav
+          className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
         >
-          Add Device
-        </Button>
-      }
+          <div className="container-fluid">
+            <a className="navbar-brand fw-semibold" href="#devices">
+              ESP32 Dashboard
+            </a>
 
-      <Divider padding="xs" />
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarContent"
+              aria-controls="navbarContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon" />
+            </button>
 
-      <Collection
-        items={devices}
-        type="list"
-        direction="row"
-        gap="20px"
-        wrap="nowrap"
-      >
-        {(item, index) => (
-          <Card
-            key={index}
-            borderRadius="medium"
-            maxWidth="20rem"
-            variation="outlined"
-          >
+            <div className="collapse navbar-collapse" id="navbarContent">
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <li className="nav-item">
+                  <a className="nav-link" href="#devices">
+                    Devices
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#telemetry">
+                    Telemetry
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#about">
+                    About
+                  </a>
+                </li>
+              </ul>
 
-            <View padding="xs">
-              <Flex>
-                {/* Last Seen: {telemetries[telemetries.length - 1]?.timestamp ? moment(telemetries[telemetries.length - 1].timestamp).fromNow() : ""} */}
+              <i className="fa fa-cog text-light ms-lg-3" aria-hidden="true" />
+            </div>
+          </div>
+        </nav>
+      </header>
 
-              </Flex>
+      <main id="devices" className="flex-grow-1 mt-5">
+        <div className="container py-5">
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <div className="d-flex justify-content-between align-items-baseline mb-3">
+                <div>
+                  <h1 className="h4 mb-1">ESP32 Fleet Devices</h1>
+                  <small className="text-muted">
+                    Live status and last-seen time for each device in your fleet.
+                  </small>
+                </div>
+                <span className="text-uppercase small text-muted">
+                  Total: {devices.length}
+                </span>
+              </div>
 
-              <br />
-              <Flex>
-                Status:
-                <Badge variation={(item?.status == "connected") ? "success" : "error"} key={item.device_id}>
-                  {item?.status ? item?.status.charAt(0).toUpperCase() + String(item?.status).slice(1) : ""}
-                </Badge>
-              </Flex>
-              <br />
-              <Flex>ID: {item.device_id}</Flex>
-              <br />
-              <Button variation="destructive" isFullWidth onClick={() => deleteDevice(item.device_id)}>
-                Delete
-              </Button>
-            </View>
-          </Card>
-        )}
-      </Collection>
-      <View padding="xs"></View>
-      <button onClick={signOut}>Sign out</button>
-    </main>
-    </ErrorBoundary>
+              {loading && <p className="text-muted mb-3">Loading…</p>}
+              {error && (
+                <p className="text-danger mb-3">Error: {error}</p>
+              )}
+
+              <div className="row g-3">
+                {devices.map((d) => (
+                  <div className="col-12 col-md-6 col-lg-4" key={d.device_id}>
+                    <div className="card h-100 border-info">
+                      <div className="card-body py-3">
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <span className="text-uppercase text-info small">
+                            Device
+                          </span>
+                          <span className="text-muted small">ID</span>
+                        </div>
+                        <div className="fw-semibold small text-break">
+                          {d.device_id}
+                        </div>
+                        <div className="small text-muted mt-2">
+                          <span className="fw-light">Last seen:</span>{" "}
+                          {d.lastSeen
+                            ? new Date(d.lastSeen).toLocaleString()
+                            : "unknown"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {!loading && devices.length === 0 && !error && (
+                  <p className="text-muted col-12 mb-0">
+                    No devices found. Check API configuration.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <section id="about" className="py-4 bg-white border-top mt-auto">
+        <div className="container text-center small text-muted">
+          About section (for navbar link).
+        </div>
+      </section>
+    </div>
   );
 }
 
