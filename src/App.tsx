@@ -104,9 +104,7 @@ function App() {
   return (
     <div className="d-flex flex-column min-vh-100 bg-light text-dark pt-5">
       <header>
-        <nav
-          className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
-        >
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
           <div className="container-fluid">
             <a className="navbar-brand fw-semibold" href="#devices">
               ESP32 Dashboard
@@ -132,11 +130,6 @@ function App() {
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="#telemetry">
-                    Telemetry
-                  </a>
-                </li>
-                <li className="nav-item">
                   <a className="nav-link" href="#about">
                     About
                   </a>
@@ -149,36 +142,31 @@ function App() {
         </nav>
       </header>
 
-      <main id="devices" className="flex-grow-1 mt-5">
-        <div className="container py-5">
+      <main id="devices" className="flex-grow-1 py-4">
+        <div className="container mt-4">
           <div className="card shadow-sm">
+            <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+              <h1 className="h5 mb-0">ESP32 Fleet Devices</h1>
+              <span className="badge bg-info text-dark">
+                Total devices: {devices.length}
+              </span>
+            </div>
             <div className="card-body">
-              <div className="d-flex justify-content-between align-items-baseline mb-3">
-                <div>
-                  <h1 className="h4 mb-1">ESP32 Fleet Devices</h1>
-                  <small className="text-muted">
-                    Live status and last-seen time for each device in your fleet.
-                  </small>
-                </div>
-                <span className="text-uppercase small text-muted">
-                  Total: {devices.length}
-                </span>
-              </div>
-
-              {loading && <p className="text-muted mb-3">Loading…</p>}
-              {error && (
-                <p className="text-danger mb-3">Error: {error}</p>
+              {loading && <p className="mb-0">Loading devices…</p>}
+              {error && !loading && (
+                <p className="text-danger mb-0">Error: {error}</p>
               )}
 
-              <div className="row g-3">
+              <div className="row g-3 mt-1">
                 {devices.map((d) => (
                   <div className="col-12 col-md-6 col-lg-4" key={d.device_id}>
                     <div className="card h-100 border-info">
                       <div className="card-body py-3">
                         <div className="d-flex justify-content-between align-items-center mb-1">
                           <span className="text-uppercase text-info small">
-                       
-                          Device ID:</span> {d.device_id}
+                            Device ID:
+                          </span>{" "}
+                          {d.device_id}
                           {d.lastItem?.name ? ` — ${d.lastItem.name}` : ""}
                         </div>
                         <div className="small text-muted mt-2">
@@ -205,6 +193,39 @@ function App() {
                             ? `${d.lastItem.speed}`
                             : "—"}
                         </div>
+
+                        <div className="mt-3" style={{ height: 120 }}>
+                          {typeof d.lastItem?.speed === "number" ? (
+                            <Line
+                              data={{
+                                labels: [d.device_id],
+                                datasets: [
+                                  {
+                                    label: "Speed",
+                                    data: [d.lastItem.speed],
+                                    borderColor: "rgba(255, 159, 64, 1)",
+                                    backgroundColor: "rgba(255, 159, 64, 0.2)",
+                                  },
+                                ],
+                              }}
+                              options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                  x: { display: false },
+                                  y: {
+                                    title: { display: false, text: "" },
+                                  },
+                                },
+                              }}
+                            />
+                          ) : (
+                            <p className="small text-muted mb-0">
+                              No speed data for chart.
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -218,35 +239,6 @@ function App() {
               </div>
             </div>
           </div>
-
-          <section id="telemetry" className="py-4">
-            <div className="card shadow-sm">
-              <div className="card-body">
-                <h2 className="h5 mb-3">Speed Overview</h2>
-                {devices.length === 0 ? (
-                  <p className="text-muted mb-0">
-                    No data available for chart yet.
-                  </p>
-                ) : (
-                  <div style={{ maxHeight: 300 }}>
-                    <Line
-                      data={speedChartData}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                          y: {
-                            title: { display: true, text: "Speed" },
-                          },
-                        },
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-
         </div>
       </main>
 
