@@ -1,4 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+);
 
 type Device = {
   device_id: string;
@@ -41,6 +60,26 @@ function App() {
     }
     load();
   }, []);
+
+  const temperatureChartData = React.useMemo(() => {
+    const labels = devices.map((d) => d.device_id);
+    const temps = devices.map((d) =>
+      typeof d.lastItem?.temperature === "number" ? d.lastItem.temperature : null
+    );
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Last temperature (°C)",
+          data: temps,
+          borderColor: "rgba(75, 192, 192, 1)",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          spanGaps: true,
+        },
+      ],
+    };
+  }, [devices]);
 
   return (
     <div className="d-flex flex-column min-vh-100 bg-light text-dark pt-5">
@@ -147,8 +186,71 @@ function App() {
               </div>
             </div>
           </div>
+
+          <div className="card shadow-sm mt-4">
+            <div className="card-body">
+              <h2 className="h5 mb-3">Temperature Chart</h2>
+
+              <Line
+                data={temperatureChartData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: "top" as const,
+                    },
+                    tooltip: {
+                      mode: "index" as const,
+                      intersect: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      title: {
+                        display: true,
+                        text: "Device ID",
+                      },
+                    },
+                    y: {
+                      title: {
+                        display: true,
+                        text: "Temperature (°C)",
+                      },
+                    },
+                  },
+                }}
+                className="mt-3"
+              />
+            </div>
+          </div>
         </div>
       </main>
+
+      <section id="telemetry" className="container py-4">
+  <div className="card shadow-sm">
+    <div className="card-body">
+      <h2 className="h5 mb-3">Temperature Overview</h2>
+      {devices.length === 0 ? (
+        <p className="text-muted mb-0">No data available for chart yet.</p>
+      ) : (
+        <div style={{ maxHeight: 300 }}>
+          <Line
+            data={temperatureChartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: {
+                  title: { display: true, text: "°C" },
+                },
+              },
+            }}
+          />
+        </div>
+      )}
+    </div>
+  </div>
+</section>
 
       <section id="about" className="py-4 bg-white border-top mt-auto">
         <div className="container text-center small text-muted">
