@@ -122,14 +122,21 @@ function App() {
                           </span>
                           <span className="text-muted small">ID</span>
                         </div>
-                        <div className="fw-semibold small text-break">
-                          {d.device_id}
+                        <div className="fw-semibold small text-break mb-1">
+                          Device ID: {d.device_id}
+                          {d.lastItem?.name ? ` — ${d.lastItem.name}` : ""}
                         </div>
                         <div className="small text-muted mt-2">
                           <span className="fw-light">Last seen:</span>{" "}
                           {d.lastSeen
                             ? new Date(d.lastSeen).toLocaleString()
                             : "unknown"}
+                        </div>
+                        <div className="small mt-1">
+                          <span className="fw-light">Last temperature:</span>{" "}
+                          {d.lastItem && typeof d.lastItem.temperature === "number"
+                            ? `${d.lastItem.temperature} °C`
+                            : "—"}
                         </div>
                       </div>
                     </div>
