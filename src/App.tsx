@@ -14,25 +14,27 @@ function App() {
   useEffect(() => {
     async function load() {
       try {
-        // Try external API Gateway if configured
-        const apiUrl = (import.meta as any)?.env?.VITE_DATA_API_URL as
-          | string
-          | undefined;
-        if (apiUrl) {
-          const res = await fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          });
-          const json = await res.json();
-          const list = Array.isArray(json.devices) ? json.devices : [];
-          setDevices(list);
-        } else {
-          // Fallback to local Node server
-          const res = await fetch("/api/devices");
-          const json = await res.json();
-          const list = Array.isArray(json.devices) ? json.devices : [];
-          setDevices(list);
+        const apiUrl =
+          "https://stmaj0z5ri.execute-api.eu-central-1.amazonaws.com/dev/esp32";
+
+        const res = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        const text = await res.text();
+
+        let json: any;
+        try {
+          json = JSON.parse(text);
+        } catch {
+          throw new Error(
+            "API did not return JSON. First chars: " + text.slice(0, 60)
+          );
         }
+
+        const list = Array.isArray(json.devices) ? json.devices : [];
+        setDevices(list);
       } catch (e: any) {
         setError(e?.message || "Failed to load devices");
       } finally {
