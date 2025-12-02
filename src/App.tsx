@@ -81,6 +81,26 @@ function App() {
     };
   }, [devices]);
 
+  const speedChartData = React.useMemo(() => {
+    const labels = devices.map((d) => d.device_id);
+    const speeds = devices.map((d) =>
+      typeof d.lastItem?.speed === "number" ? d.lastItem.speed : null
+    );
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Last speed",
+          data: speeds,
+          borderColor: "rgba(255, 159, 64, 1)",
+          backgroundColor: "rgba(255, 159, 64, 0.2)",
+          spanGaps: true,
+        },
+      ],
+    };
+  }, [devices]);
+
   return (
     <div className="d-flex flex-column min-vh-100 bg-light text-dark pt-5">
       <header>
@@ -173,6 +193,18 @@ function App() {
                             ? `${d.lastItem.temperature} °C`
                             : "—"}
                         </div>
+                        <div className="small mt-1">
+                          <span className="fw-light">Last humidity:</span>{" "}
+                          {d.lastItem && typeof d.lastItem.humidity === "number"
+                            ? `${d.lastItem.humidity} %`
+                            : "—"}
+                        </div>
+                        <div className="small mt-1">
+                          <span className="fw-light">Last speed:</span>{" "}
+                          {d.lastItem && typeof d.lastItem.speed === "number"
+                            ? `${d.lastItem.speed}`
+                            : "—"}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -187,70 +219,36 @@ function App() {
             </div>
           </div>
 
-          <div className="card shadow-sm mt-4">
-            <div className="card-body">
-              <h2 className="h5 mb-3">Temperature Chart</h2>
-
-              <Line
-                data={temperatureChartData}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: {
-                      position: "top" as const,
-                    },
-                    tooltip: {
-                      mode: "index" as const,
-                      intersect: false,
-                    },
-                  },
-                  scales: {
-                    x: {
-                      title: {
-                        display: true,
-                        text: "Device ID",
-                      },
-                    },
-                    y: {
-                      title: {
-                        display: true,
-                        text: "Temperature (°C)",
-                      },
-                    },
-                  },
-                }}
-                className="mt-3"
-              />
+          <section id="telemetry" className="py-4">
+            <div className="card shadow-sm">
+              <div className="card-body">
+                <h2 className="h5 mb-3">Speed Overview</h2>
+                {devices.length === 0 ? (
+                  <p className="text-muted mb-0">
+                    No data available for chart yet.
+                  </p>
+                ) : (
+                  <div style={{ maxHeight: 300 }}>
+                    <Line
+                      data={speedChartData}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                          y: {
+                            title: { display: true, text: "Speed" },
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </section>
+
         </div>
       </main>
-
-      <section id="telemetry" className="container py-4">
-  <div className="card shadow-sm">
-    <div className="card-body">
-      <h2 className="h5 mb-3">Temperature Overview</h2>
-      {devices.length === 0 ? (
-        <p className="text-muted mb-0">No data available for chart yet.</p>
-      ) : (
-        <div style={{ maxHeight: 300 }}>
-          <Line
-            data={temperatureChartData}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                y: {
-                  title: { display: true, text: "°C" },
-                },
-              },
-            }}
-          />
-        </div>
-      )}
-    </div>
-  </div>
-</section>
 
       <section id="about" className="py-4 bg-white border-top mt-auto">
         <div className="container text-center small text-muted">
