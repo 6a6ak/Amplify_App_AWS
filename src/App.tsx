@@ -101,6 +101,35 @@ function App() {
     };
   }, [devices]);
 
+  const plateSpeedChartData = React.useMemo(() => {
+    const plateToSpeed: Record<string, number> = {};
+
+    devices.forEach((d) => {
+      const plate = d.lastItem?.plate as string | undefined;
+      const speed = d.lastItem?.speed;
+
+      if (plate && typeof speed === "number") {
+        plateToSpeed[plate] = speed;
+      }
+    });
+
+    const labels = Object.keys(plateToSpeed);
+    const speeds = labels.map((p) => plateToSpeed[p]);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Speed per plate",
+          data: speeds,
+          borderColor: "rgba(255, 99, 132, 1)",
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          spanGaps: true,
+        },
+      ],
+    };
+  }, [devices]);
+
   return (
     <div className="d-flex flex-column min-vh-100 bg-light text-dark pt-5">
       <header>
@@ -157,6 +186,30 @@ function App() {
                 <p className="text-danger mb-0">Error: {error}</p>
               )}
 
+              {plateSpeedChartData.labels.length > 0 && (
+                <div className="mb-4" style={{ height: 260 }}>
+                  <h2 className="h6 mb-3">Speed per plate</h2>
+                  <Line
+                    data={plateSpeedChartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: true, position: "bottom" },
+                      },
+                      scales: {
+                        x: {
+                          title: { display: true, text: "Plate" },
+                        },
+                        y: {
+                          title: { display: true, text: "Speed" },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              )}
+
               <div className="row g-3 mt-1">
                 {devices.map((d) => (
                   <div className="col-12 col-md-6 col-lg-4" key={d.device_id}>
@@ -192,39 +245,6 @@ function App() {
                           {d.lastItem && typeof d.lastItem.speed === "number"
                             ? `${d.lastItem.speed}`
                             : "—"}
-                        </div>
-
-                        <div className="mt-3" style={{ height: 120 }}>
-                          {typeof d.lastItem?.speed === "number" ? (
-                            <Line
-                              data={{
-                                labels: [d.device_id],
-                                datasets: [
-                                  {
-                                    label: "Speed",
-                                    data: [d.lastItem.speed],
-                                    borderColor: "rgba(255, 159, 64, 1)",
-                                    backgroundColor: "rgba(255, 159, 64, 0.2)",
-                                  },
-                                ],
-                              }}
-                              options={{
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                  x: { display: false },
-                                  y: {
-                                    title: { display: false, text: "" },
-                                  },
-                                },
-                              }}
-                            />
-                          ) : (
-                            <p className="small text-muted mb-0">
-                              No speed data for chart.
-                            </p>
-                          )}
                         </div>
                       </div>
                     </div>
