@@ -1,16 +1,9 @@
 {
   "version": "1",
   "auth": {
-    "user_pool_id": "PLACEHOLDER_USER_POOL_ID",
-    "aws_region": "us-east-1",
-    "user_pool_client_id": "PLACEHOLDER_CLIENT_ID",
-    "identity_pool_id": "PLACEHOLDER_IDENTITY_POOL_ID"
-  },
-  "data": {
-    "url": "PLACEHOLDER_GRAPHQL_URL",
-    "aws_region": "us-east-1",
-    "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
-    "authorization_types": ["API_KEY"],
-    "api_key": "PLACEHOLDER_API_KEY"
+    "user_pool_id": "eu-central-1_oZTibxqzE",
+    "aws_region": "eu-central-1",
+    "user_pool_client_id": "4hej60vvfvs1l9vh46iv5dt513",
+    "identity_pool_id": ""
   }
 }

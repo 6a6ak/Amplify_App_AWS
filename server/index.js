@@ -27,6 +27,8 @@ const ddb = new AWS.DynamoDB.DocumentClient();
 const DDB_TABLE = process.env.DDB_TABLE || 'ESP_Data';
 const DATA_API_URL = process.env.DATA_API_URL || null; // external API (API Gateway) base URL to fetch DynamoDB data
 const DATA_API_KEY = process.env.DATA_API_KEY || null; // optional x-api-key for API Gateway
+const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID || null; // required for admin user invite
+const COGNITO_ADMIN_GROUP = process.env.COGNITO_ADMIN_GROUP || 'admin';
 
 // Helper to try fetching an external URL and return parsed data or null
 async function tryFetchUrl(url) {
@@ -563,5 +565,46 @@ app.get('/api/internal/status-map', (req, res) => {
     return res.json({ count: arr.length, items: arr });
   } catch (e) {
     return res.status(500).json({ error: e.message });
+  }
+});
+
+// --- Admin: invite a Cognito user (dev-only; requires AWS creds + env COGNITO_USER_POOL_ID) ---
+app.post('/api/admin/users', async (req, res) => {
+  try {
+    if (!COGNITO_USER_POOL_ID) {
+      return res.status(500).json({ error: 'COGNITO_USER_POOL_ID env is not set on server' });
+    }
+    const { email, temporaryPassword, role } = req.body || {};
+    if (!email) return res.status(400).json({ error: 'email is required' });
+
+    const cognito = new AWS.CognitoIdentityServiceProvider();
+    const temp = temporaryPassword || `Temp#${Math.floor(Math.random()*1e9)}`;
+    const createParams = {
+      UserPoolId: COGNITO_USER_POOL_ID,
+      Username: email,
+      TemporaryPassword: temp,
+      MessageAction: 'SUPPRESS',
+      UserAttributes: [
+        { Name: 'email', Value: email },
+        { Name: 'email_verified', Value: 'true' }
+      ]
+    };
+    await cognito.adminCreateUser(createParams).promise();
+
+    // Add to admin group if requested/available
+    if ((role || '').toLowerCase() === 'admin' && COGNITO_ADMIN_GROUP) {
+      try {
+        await cognito.adminAddUserToGroup({
+          UserPoolId: COGNITO_USER_POOL_ID,
+          Username: email,
+          GroupName: COGNITO_ADMIN_GROUP,
+        }).promise();
+      } catch (e) {
+        // ignore group add failure, return create success
+      }
+    }
+    return res.json({ ok: true, email });
+  } catch (e) {
+    return res.status(500).json({ error: e && e.message ? e.message : 'adminCreateUser failed' });
   }
 });

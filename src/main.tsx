@@ -1,32 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Authenticator } from '@aws-amplify/ui-react';
 import App from "./App.tsx";
 import "./index.css";
+
 import { Amplify } from "aws-amplify";
+import { Authenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
 import outputs from "../amplify_outputs.json";
-import '@aws-amplify/ui-react/styles.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AdminPage from "./components/AdminPage";
 
-Amplify.configure(outputs);
-// If `amplify_outputs.json` contains placeholder values (used for CI or
-// when Auth isn't setup), skip the Authenticator so the dashboard is
-// publicly visible. This avoids a blank page when Cognito isn't configured.
-const hasAuthConfigured = !!(
-  outputs && outputs.auth && typeof outputs.auth.user_pool_id === 'string' &&
-  !outputs.auth.user_pool_id.includes('PLACEHOLDER')
+// Configure Amplify once using full outputs (Amplify Gen 2 schema)
+Amplify.configure(outputs as any);
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <Authenticator initialState="signIn" loginMechanisms={["email"]}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
+    </BrowserRouter>
+  </Authenticator>
 );
 
-const Root = () => (
-  <React.StrictMode>
-    {hasAuthConfigured ? (
-      <Authenticator>
-        <App />
-      </Authenticator>
-    ) : (
-      <App />
-    )}
-  </React.StrictMode>
-);
-
-ReactDOM.createRoot(document.getElementById("root")!).render(<Root />);
- 

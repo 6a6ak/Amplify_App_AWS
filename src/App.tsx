@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -164,8 +165,13 @@ function App() {
                   </a>
                 </li>
               </ul>
-
-              <i className="fa fa-cog text-light ms-lg-3" aria-hidden="true" />
+              <Link
+                to="/admin"
+                className="btn btn-sm btn-outline-light ms-lg-3"
+                title="Admin settings"
+              >
+                <i className="fa fa-cog" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </nav>
@@ -267,6 +273,8 @@ function App() {
           About section (for navbar link).
         </div>
       </section>
+
+      {/* Admin page is now a dedicated route at /admin */}
     </div>
   );
 }
