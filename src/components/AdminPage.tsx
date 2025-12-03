@@ -71,6 +71,7 @@ export default function AdminPage() {
     if (isRefreshing) return;
     setIsRefreshing(true);
     try {
+      const isProd = window.location.hostname.includes("amplifyapp.com");
       const res = await fetch("/api/internal/status-map");
       const json = await res.json();
       if (res.ok) {
@@ -94,7 +95,14 @@ export default function AdminPage() {
     } catch {}
 
     try {
-      const res2 = await fetch("/api/devices");
+      const isProd = window.location.hostname.includes("amplifyapp.com");
+      const apiUrl = isProd
+        ? "https://stmaj0z5ri.execute-api.eu-central-1.amazonaws.com/dev/esp32"
+        : "/api/devices";
+      const res2 = await fetch(apiUrl, {
+        method: isProd ? "POST" : "GET",
+        headers: { "Content-Type": "application/json" },
+      });
       const json2 = await res2.json();
       const list = Array.isArray(json2.devices) ? json2.devices : [];
       const mapped = list.map((d: any) => {
