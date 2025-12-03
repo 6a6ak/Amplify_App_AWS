@@ -9,6 +9,9 @@ import "@aws-amplify/ui-react/styles.css";
 import outputs from "../amplify_outputs.json";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminPage from "./components/AdminPage";
+// Bootstrap styles & JS for navbar/toggler
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 // Configure Amplify once using full outputs (Amplify Gen 2 schema)
 Amplify.configure(outputs as any);
