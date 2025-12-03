@@ -40,3 +40,6 @@ server.log
 
 # Archives
 .git.zip
+esp8266/aws_iotcore_esp8266/Cert/*
+esp8266/connect_device_package.zip
+esp8266/aws_iotcore_esp8266/secrets.h

@@ -1,4 +1,42 @@
+:root {
+  --bg: #f8f9fa;
+  --text: #212529;
+  --card-bg: #ffffff;
+  --card-border: #dee2e6;
+  --navbar-bg: linear-gradient(90deg, #0d6efd 0%, #20c997 50%, #6610f2 100%);
+}
+
+[data-theme="dark"] {
+  /* Dark mode: deep blue background */
+  --bg: #0d1b2a; /* dark blue */
+  --text: #e6edf3; /* soft light text */
+  --card-bg: #152238; /* slightly lighter blue for cards */
+  --card-border: #1f2f4a; /* subtle blue border */
+  --navbar-bg: linear-gradient(90deg, #0a58ca 0%, #0d6efd 50%, #2b6cb0 100%);
+}
+
+/* Keep menu unchanged across themes (no override) */
+
+html,
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: 100%;
+  color: var(--text);
+  background: var(--bg);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* Prevent Bootstrap bg-light utilities from overriding page background */
+html.bg-light,
+body.bg-light {
+  background: var(--bg) !important;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+.navbar.admin-gradient {
+  background: var(--navbar-bg) !important;
 }

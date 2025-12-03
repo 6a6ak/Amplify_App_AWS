@@ -9,6 +9,7 @@ import "@aws-amplify/ui-react/styles.css";
 import outputs from "../amplify_outputs.json";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminPage from "./components/AdminPage";
+import DevicePage from "./components/DevicePage";
 // Bootstrap styles & JS for navbar/toggler
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -20,6 +21,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} />
+      <Route path="/devices" element={<DevicePage />} />
+      <Route path="/devices/:id" element={<DevicePage />} />
       <Route
         path="/admin"
         element={
@@ -29,23 +32,23 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             formFields={{
               signIn: {
                 username: {
-                  label: 'Email',
-                  type: 'email',
-                  placeholder: 'you@example.com',
-                  autocomplete: 'email'
-                }
+                  label: "Email",
+                  type: "email",
+                  placeholder: "you@example.com",
+                  autocomplete: "email",
+                },
               },
               signUp: {
                 username: {
-                  label: 'Email',
-                  type: 'email',
-                  placeholder: 'you@example.com',
-                  autocomplete: 'email'
+                  label: "Email",
+                  type: "email",
+                  placeholder: "you@example.com",
+                  autocomplete: "email",
                 },
                 password: {
-                  label: 'Password'
-                }
-              }
+                  label: "Password",
+                },
+              },
             }}
           >
             <AdminPage />
@@ -56,3 +59,12 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   </BrowserRouter>
 );
 
+// Initialize theme based on localStorage or system preference
+try {
+  const saved = localStorage.getItem("theme");
+  const prefersDark =
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = saved || (prefersDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+} catch {}

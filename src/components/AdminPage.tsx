@@ -141,7 +141,7 @@ export default function AdminPage() {
   // Always render page with navbar; show access message in content if not admin
 
   return (
-    <div className="d-flex flex-column min-vh-100 bg-light text-dark pt-5">
+    <div className="d-flex flex-column min-vh-100 pt-5">
       <style>{`
         .admin-gradient {
           background: linear-gradient(90deg, #0d6efd 0%, #20c997 50%, #6610f2 100%);
@@ -171,9 +171,14 @@ export default function AdminPage() {
             <div className="collapse navbar-collapse" id="navbarContent">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <a className="nav-link" href="#devices">
+                  <Link className="nav-link" to="/">
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/devices">
                     Devices
-                  </a>
+                  </Link>
                 </li>
                 <li className="nav-item">
                   <a className="nav-link" href="#about">
@@ -202,6 +207,30 @@ export default function AdminPage() {
                       {(user as any)?.attributes?.email ||
                         (user as any)?.username}
                     </span>
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-light"
+                      onClick={() => {
+                        const cur =
+                          document.documentElement.getAttribute("data-theme");
+                        const next = cur === "dark" ? "light" : "dark";
+                        document.documentElement.setAttribute(
+                          "data-theme",
+                          next
+                        );
+                        try {
+                          localStorage.setItem("theme", next);
+                        } catch {}
+                      }}
+                      title="Toggle dark/light"
+                    >
+                      {document.documentElement.getAttribute("data-theme") ===
+                      "dark" ? (
+                        <i className="fa fa-sun" aria-hidden="true" />
+                      ) : (
+                        <i className="fa fa-moon" aria-hidden="true" />
+                      )}
+                    </button>
                     <button
                       className="btn btn-sm btn-outline-light"
                       onClick={() => signOut()}

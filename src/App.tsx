@@ -65,7 +65,9 @@ function App() {
   const temperatureChartData = React.useMemo(() => {
     const labels = devices.map((d) => d.device_id);
     const temps = devices.map((d) =>
-      typeof d.lastItem?.temperature === "number" ? d.lastItem.temperature : null
+      typeof d.lastItem?.temperature === "number"
+        ? d.lastItem.temperature
+        : null
     );
 
     return {
@@ -100,6 +102,34 @@ function App() {
         },
       ],
     };
+    <div className="d-flex align-items-center gap-2">
+      <button
+        type="button"
+        className="btn btn-sm btn-outline-light"
+        onClick={() => {
+          const cur = document.documentElement.getAttribute("data-theme");
+          const next = cur === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem("theme", next);
+          } catch {}
+        }}
+        title="Toggle dark/light"
+      >
+        {document.documentElement.getAttribute("data-theme") === "dark" ? (
+          <i className="fa fa-sun" aria-hidden="true" />
+        ) : (
+          <i className="fa fa-moon" aria-hidden="true" />
+        )}
+      </button>
+      <Link
+        to="/admin"
+        className="btn btn-sm btn-outline-light ms-lg-3"
+        title="Admin settings"
+      >
+        <i className="fa fa-cog" aria-hidden="true" />
+      </Link>
+    </div>;
   }, [devices]);
 
   const plateSpeedChartData = React.useMemo(() => {
@@ -132,9 +162,9 @@ function App() {
   }, [devices]);
 
   return (
-    <div className="d-flex flex-column min-vh-100 bg-light text-dark pt-5">
+    <div className="d-flex flex-column min-vh-100 pt-5">
       <header>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
           <div className="container-fluid">
             <a className="navbar-brand fw-semibold" href="#devices">
               ESP32 Dashboard
@@ -155,9 +185,14 @@ function App() {
             <div className="collapse navbar-collapse" id="navbarContent">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <a className="nav-link" href="#devices">
+                  <Link className="nav-link" to="/">
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/devices">
                     Devices
-                  </a>
+                  </Link>
                 </li>
                 <li className="nav-item">
                   <a className="nav-link" href="#about">
@@ -236,7 +271,8 @@ function App() {
                         </div>
                         <div className="small mt-1">
                           <span className="fw-light">Last temperature:</span>{" "}
-                          {d.lastItem && typeof d.lastItem.temperature === "number"
+                          {d.lastItem &&
+                          typeof d.lastItem.temperature === "number"
                             ? `${d.lastItem.temperature} °C`
                             : "—"}
                         </div>
