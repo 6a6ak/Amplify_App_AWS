@@ -14,13 +14,18 @@ import AdminPage from "./components/AdminPage";
 Amplify.configure(outputs as any);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Authenticator initialState="signIn" loginMechanisms={["email"]}>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/admin" element={<AdminPage />} />
-      </Routes>
-    </BrowserRouter>
-  </Authenticator>
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route
+        path="/admin"
+        element={
+          <Authenticator initialState="signIn" loginMechanisms={["email"]}>
+            <AdminPage />
+          </Authenticator>
+        }
+      />
+    </Routes>
+  </BrowserRouter>
 );
 
