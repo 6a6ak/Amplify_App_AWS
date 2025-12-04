@@ -20,6 +20,19 @@ ChartJS.register(
   Legend
 );
 
+// Plugin to paint line chart canvas background creamy off-white
+const chartBgPlugin = {
+  id: "chartBgPlugin",
+  beforeDraw: (chart: any) => {
+    const { ctx, width, height } = chart;
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-over";
+    ctx.fillStyle = "#f7f4ef"; // creamy off-white
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  },
+};
+
 type Device = {
   device_id: string;
   lastSeen?: number;
@@ -62,75 +75,7 @@ function App() {
     load();
   }, []);
 
-  const temperatureChartData = React.useMemo(() => {
-    const labels = devices.map((d) => d.device_id);
-    const temps = devices.map((d) =>
-      typeof d.lastItem?.temperature === "number"
-        ? d.lastItem.temperature
-        : null
-    );
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: "Last temperature (°C)",
-          data: temps,
-          borderColor: "rgba(75, 192, 192, 1)",
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
-          spanGaps: true,
-        },
-      ],
-    };
-  }, [devices]);
-
-  const speedChartData = React.useMemo(() => {
-    const labels = devices.map((d) => d.device_id);
-    const speeds = devices.map((d) =>
-      typeof d.lastItem?.speed === "number" ? d.lastItem.speed : null
-    );
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: "Last speed",
-          data: speeds,
-          borderColor: "rgba(255, 159, 64, 1)",
-          backgroundColor: "rgba(255, 159, 64, 0.2)",
-          spanGaps: true,
-        },
-      ],
-    };
-    <div className="d-flex align-items-center gap-2">
-      <button
-        type="button"
-        className="btn btn-sm btn-outline-light"
-        onClick={() => {
-          const cur = document.documentElement.getAttribute("data-theme");
-          const next = cur === "dark" ? "light" : "dark";
-          document.documentElement.setAttribute("data-theme", next);
-          try {
-            localStorage.setItem("theme", next);
-          } catch {}
-        }}
-        title="Toggle dark/light"
-      >
-        {document.documentElement.getAttribute("data-theme") === "dark" ? (
-          <i className="fa fa-sun" aria-hidden="true" />
-        ) : (
-          <i className="fa fa-moon" aria-hidden="true" />
-        )}
-      </button>
-      <Link
-        to="/admin"
-        className="btn btn-sm btn-outline-light ms-lg-3"
-        title="Admin settings"
-      >
-        <i className="fa fa-cog" aria-hidden="true" />
-      </Link>
-    </div>;
-  }, [devices]);
+  // Removed unused temperature and speed chart data builders
 
   const plateSpeedChartData = React.useMemo(() => {
     const plateToSpeed: Record<string, number> = {};
@@ -165,9 +110,12 @@ function App() {
     <div className="d-flex flex-column min-vh-100 pt-5">
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
-          <div className="container-fluid">
-            <a className="navbar-brand fw-semibold" href="#devices">
-              ESP32 Dashboard
+          <div className="container">
+            <a
+              className="navbar-brand fw-semibold d-flex align-items-center"
+              href="/"
+            >
+              <i className="fa fa-car" aria-hidden="true" />
             </a>
 
             <button
@@ -212,12 +160,19 @@ function App() {
         </nav>
       </header>
 
-      <main id="devices" className="flex-grow-1 py-4">
+      <main
+        id="devices"
+        className="flex-grow-1 py-4"
+        style={{ backgroundColor: "var(--bg)" }}
+      >
         <div className="container mt-4">
           <div className="card shadow-sm">
-            <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+            <div
+              className="card-header border-0 d-flex justify-content-between align-items-center"
+              style={{ backgroundColor: "var(--card-bg)" }}
+            >
               <h1 className="h5 mb-0">ESP32 Fleet Devices</h1>
-              <span className="badge bg-info text-dark">
+              <span className="badge bg-info">
                 Total devices: {devices.length}
               </span>
             </div>
@@ -247,6 +202,7 @@ function App() {
                         },
                       },
                     }}
+                    plugins={[chartBgPlugin]}
                   />
                 </div>
               )}
@@ -304,7 +260,11 @@ function App() {
         </div>
       </main>
 
-      <section id="about" className="py-4 bg-white border-top mt-auto">
+      <section
+        id="about"
+        className="py-4 border-top mt-auto"
+        style={{ backgroundColor: "var(--card-bg)" }}
+      >
         <div className="container text-center small text-muted">
           About section (for navbar link).
         </div>

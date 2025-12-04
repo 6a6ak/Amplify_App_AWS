@@ -1,18 +1,19 @@
 :root {
-  --bg: #f8f9fa;
-  --text: #212529;
-  --card-bg: #ffffff;
-  --card-border: #dee2e6;
-  --navbar-bg: linear-gradient(90deg, #0d6efd 0%, #20c997 50%, #6610f2 100%);
+  /* Site background behind all containers */
+  --bg: #1d3557; /* deep blue */
+  --text: #e6edf3;
+  --card-bg: #002b36; /* very dark cyan/blue surface */
+  --card-border: #003845; /* subtle darker border */
+  /* Ocean Sunset (blue range): deep navy → teal → cyan */
+  --navbar-bg: linear-gradient(90deg, #001219 0%, #005f73 50%, #0a9396 100%);
 }
 
 [data-theme="dark"] {
-  /* Dark mode: deep blue background */
-  --bg: #0d1b2a; /* dark blue */
-  --text: #e6edf3; /* soft light text */
-  --card-bg: #152238; /* slightly lighter blue for cards */
-  --card-border: #1f2f4a; /* subtle blue border */
-  --navbar-bg: linear-gradient(90deg, #0a58ca 0%, #0d6efd 50%, #2b6cb0 100%);
+  --bg: #1d3557;
+  --text: #e6edf3;
+  --card-bg: #002b36;
+  --card-border: #003845;
+  --navbar-bg: linear-gradient(90deg, #001219 0%, #005f73 50%, #0a9396 100%);
 }
 
 /* Keep menu unchanged across themes (no override) */
@@ -36,7 +37,54 @@ body.bg-light {
 .card {
   background-color: var(--card-bg);
   border-color: var(--card-border);
+  color: var(--text) !important;
+}
+.card-header,
+.card-body,
+.card-footer {
+  background-color: var(--card-bg);
+  color: var(--text) !important;
+}
+.table {
+  background-color: var(--card-bg);
+}
+.table thead,
+.table tbody,
+.table tfoot {
+  background-color: transparent;
+}
+.container,
+.container-fluid,
+.row,
+.col {
+  background: transparent;
 }
 .navbar.admin-gradient {
   background: var(--navbar-bg) !important;
+}
+
+/* Nicer, slightly thicker font for menu */
+.navbar .nav-link,
+.navbar .navbar-brand {
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  color: #ffffff !important;
+}
+
+/* Ensure readable text on dark surfaces */
+.card-header,
+.card-body,
+.card-footer {
+  color: var(--text);
+}
+.table,
+.table th,
+.table td {
+  color: var(--text);
+}
+.text-muted {
+  color: #cbd5e1 !important; /* lighter muted for dark bg */
+}
+.badge.text-dark {
+  color: #ffffff !important;
 }

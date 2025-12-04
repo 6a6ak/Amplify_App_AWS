@@ -12,6 +12,19 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
+// Plugin to paint chart canvas background creamy off-white
+const chartBgPlugin = {
+  id: "chartBgPlugin",
+  beforeDraw: (chart: any) => {
+    const { ctx, width, height } = chart;
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-over";
+    ctx.fillStyle = "#f7f4ef"; // creamy off-white
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  },
+};
+
 function useDevices() {
   const [devices, setDevices] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -70,8 +83,8 @@ export function DeviceList() {
         {
           label: "Devices seen per day (7d)",
           data: labels.map((l) => buckets[l]),
-          backgroundColor: "rgba(13, 110, 253, 0.5)",
-          borderColor: "rgba(13, 110, 253, 1)",
+          backgroundColor: "rgba(10, 147, 150, 0.5)", // #0a9396
+          borderColor: "rgba(10, 147, 150, 1)",
         },
       ],
     };
@@ -107,8 +120,8 @@ export function DeviceList() {
         {
           label: "Devices seen per month (12m)",
           data: labels.map((l) => buckets[l]),
-          backgroundColor: "rgba(32, 201, 151, 0.5)",
-          borderColor: "rgba(32, 201, 151, 1)",
+          backgroundColor: "rgba(0, 95, 115, 0.5)", // #005f73
+          borderColor: "rgba(0, 95, 115, 1)",
         },
       ],
     };
@@ -139,8 +152,8 @@ export function DeviceList() {
         {
           label: "Devices seen per year (3y)",
           data: labels.map((l) => buckets[l]),
-          backgroundColor: "rgba(102, 16, 242, 0.5)",
-          borderColor: "rgba(102, 16, 242, 1)",
+          backgroundColor: "rgba(0, 18, 25, 0.5)", // #001219
+          borderColor: "rgba(0, 18, 25, 1)",
         },
       ],
     };
@@ -150,9 +163,12 @@ export function DeviceList() {
     <div className="d-flex flex-column min-vh-100 pt-5">
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
-          <div className="container-fluid">
-            <a className="navbar-brand fw-semibold" href="#devices">
-              ESP32 Dashboard
+          <div className="container">
+            <a
+              className="navbar-brand fw-semibold d-flex align-items-center"
+              href="/"
+            >
+              <i className="fa fa-car" aria-hidden="true" />
             </a>
             <button
               className="navbar-toggler"
@@ -194,7 +210,7 @@ export function DeviceList() {
           </div>
         </nav>
       </header>
-      <main className="flex-grow-1">
+      <main className="flex-grow-1" style={{ backgroundColor: "var(--bg)" }}>
         <div className="container py-4">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1 className="h5 mb-0">Devices</h1>
@@ -207,7 +223,10 @@ export function DeviceList() {
                 <div className="card-header">
                   Daily online devices (last 7 days)
                 </div>
-                <div className="card-body" style={{ height: 240 }}>
+                <div
+                  className="card-body"
+                  style={{ height: 240, backgroundColor: "#46b1c9" }}
+                >
                   <Bar
                     data={dailyData}
                     options={{
@@ -221,6 +240,7 @@ export function DeviceList() {
                         y: { beginAtZero: true },
                       },
                     }}
+                    plugins={[chartBgPlugin]}
                   />
                 </div>
               </div>
@@ -230,7 +250,10 @@ export function DeviceList() {
                 <div className="card-header">
                   Monthly online devices (last 12 months)
                 </div>
-                <div className="card-body" style={{ height: 240 }}>
+                <div
+                  className="card-body"
+                  style={{ height: 240, backgroundColor: "#46b1c9" }}
+                >
                   <Bar
                     data={monthlyData}
                     options={{
@@ -244,6 +267,7 @@ export function DeviceList() {
                         y: { beginAtZero: true },
                       },
                     }}
+                    plugins={[chartBgPlugin]}
                   />
                 </div>
               </div>
@@ -253,7 +277,10 @@ export function DeviceList() {
                 <div className="card-header">
                   Yearly online devices (last 3 years)
                 </div>
-                <div className="card-body" style={{ height: 240 }}>
+                <div
+                  className="card-body"
+                  style={{ height: 240, backgroundColor: "#46b1c9" }}
+                >
                   <Bar
                     data={yearlyData}
                     options={{
@@ -267,6 +294,7 @@ export function DeviceList() {
                         y: { beginAtZero: true },
                       },
                     }}
+                    plugins={[chartBgPlugin]}
                   />
                 </div>
               </div>
@@ -309,7 +337,10 @@ export function DeviceList() {
           </div>
         </div>
       </main>
-      <section className="py-4 bg-white border-top mt-auto">
+      <section
+        className="py-4 border-top mt-auto"
+        style={{ backgroundColor: "var(--card-bg)" }}
+      >
         <div className="container text-center small text-muted">
           Devices section
         </div>
@@ -334,9 +365,9 @@ export default function DevicePage() {
     <div className="d-flex flex-column min-vh-100 pt-5">
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
-          <div className="container-fluid">
+          <div className="container">
             <a className="navbar-brand fw-semibold" href="#devices">
-              ESP32 Dashboard
+              <i className="fa fa-car" aria-hidden="true" />
             </a>
             <button
               className="navbar-toggler"
@@ -466,7 +497,10 @@ export default function DevicePage() {
           )}
         </div>
       </main>
-      <section className="py-4 bg-white border-top mt-auto">
+      <section
+        className="py-4 border-top mt-auto"
+        style={{ backgroundColor: "var(--card-bg)" }}
+      >
         <div className="container text-center small text-muted">
           Device details
         </div>

@@ -1,7 +1,5 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css";
 
 import { Amplify } from "aws-amplify";
 import { Authenticator } from "@aws-amplify/ui-react";
@@ -12,6 +10,8 @@ import AdminPage from "./components/AdminPage";
 import DevicePage from "./components/DevicePage";
 // Bootstrap styles & JS for navbar/toggler
 import "bootstrap/dist/css/bootstrap.min.css";
+// App styles should come after Bootstrap to override defaults
+import "./index.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 // Configure Amplify once using full outputs (Amplify Gen 2 schema)
@@ -59,12 +59,4 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   </BrowserRouter>
 );
 
-// Initialize theme based on localStorage or system preference
-try {
-  const saved = localStorage.getItem("theme");
-  const prefersDark =
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const theme = saved || (prefersDark ? "dark" : "light");
-  document.documentElement.setAttribute("data-theme", theme);
-} catch {}
+// Removed dark/light theme initialization

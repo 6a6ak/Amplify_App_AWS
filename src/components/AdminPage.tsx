@@ -1,77 +1,49 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuthenticator } from "@aws-amplify/ui-react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 export default function AdminPage() {
   const ONLINE_WINDOW_MS = 30 * 1000; // consider online only if seen within 30s
-  const [email, setEmail] = React.useState("");
-  const [tempPassword, setTempPassword] = React.useState("");
-  const [status, setStatus] = React.useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [statusMap, setStatusMap] = React.useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const { user, signOut } = useAuthenticator((ctx) => [ctx.user, ctx.signOut]);
 
-  React.useEffect(() => {
-    // derive admin group from signed-in user token payload if available
-    try {
-      const groups =
-        (user &&
-          ((user as any)?.signInUserSession?.idToken?.payload?.[
-            "cognito:groups"
-          ] ||
-            (user as any)?.attributes?.["cognito:groups"])) ||
-        [];
-      const grpArr = Array.isArray(groups)
-        ? groups
-        : typeof groups === "string"
-        ? [groups]
-        : [];
-      setIsAdmin(grpArr.includes("admin"));
-    } catch (e) {
-      setIsAdmin(false);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+  // Plugin to paint chart canvas background creamy off-white
+  const chartBgPlugin = React.useMemo(
+    () => ({
+      id: "chartBgPlugin",
+      beforeDraw: (chart: any) => {
+        const { ctx, width, height } = chart;
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-over";
+        ctx.fillStyle = "#f7f4ef"; // creamy off-white
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      },
+    }),
+    []
+  );
 
-  async function invite(e: React.FormEvent) {
-    e.preventDefault();
-    setStatus(null);
-    try {
-      const isDev =
-        location.hostname === "localhost" || location.hostname === "127.0.0.1";
-      if (!isDev) {
-        setStatus(
-          "Admin invite is dev-only here. Wire a Lambda in production."
-        );
-        return;
-      }
-      const res = await fetch("/api/admin/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          temporaryPassword: tempPassword || undefined,
-          role: "admin",
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || "Invite failed");
-      setStatus("Admin user invited successfully.");
-      setEmail("");
-      setTempPassword("");
-    } catch (e: any) {
-      setStatus(e?.message || "Invite failed");
-    }
-  }
+  React.useEffect(() => {
+    setLoading(false);
+  }, [user]);
 
   async function refreshStatusMap() {
     if (isRefreshing) return;
     setIsRefreshing(true);
     try {
-      const isProd = window.location.hostname.includes("amplifyapp.com");
       const res = await fetch("/api/internal/status-map");
       const json = await res.json();
       if (res.ok) {
@@ -129,6 +101,99 @@ export default function AdminPage() {
     return () => clearInterval(id);
   }, []);
 
+  // Build chart datasets from status map
+  const dailyData = React.useMemo(() => {
+    const now = Date.now();
+    const buckets: Record<string, number> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now - i * 24 * 3600 * 1000);
+      const key = d.toLocaleDateString();
+      buckets[key] = 0;
+    }
+    statusMap.forEach((it) => {
+      const ls = typeof it.lastSeen === "number" ? it.lastSeen : null;
+      if (typeof ls === "number") {
+        const day = new Date(ls).toLocaleDateString();
+        if (day in buckets) buckets[day] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per day (7d)",
+          data: labels.map((l) => buckets[l]),
+          backgroundColor: "rgba(10, 147, 150, 0.5)", // #0a9396
+          borderColor: "rgba(10, 147, 150, 1)",
+        },
+      ],
+    };
+  }, [statusMap]);
+
+  const monthlyData = React.useMemo(() => {
+    const now = new Date();
+    const buckets: Record<string, number> = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${(d.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`;
+      buckets[key] = 0;
+    }
+    statusMap.forEach((it) => {
+      const ls = typeof it.lastSeen === "number" ? it.lastSeen : null;
+      if (typeof ls === "number") {
+        const dt = new Date(ls);
+        const key = `${dt.getFullYear()}-${(dt.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}`;
+        if (key in buckets) buckets[key] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per month (12m)",
+          data: labels.map((l) => buckets[l]),
+          backgroundColor: "rgba(0, 95, 115, 0.5)", // #005f73
+          borderColor: "rgba(0, 95, 115, 1)",
+        },
+      ],
+    };
+  }, [statusMap]);
+
+  const yearlyData = React.useMemo(() => {
+    const now = new Date();
+    const buckets: Record<string, number> = {};
+    for (let i = 2; i >= 0; i--) {
+      const year = now.getFullYear() - i;
+      buckets[String(year)] = 0;
+    }
+    statusMap.forEach((it) => {
+      const ls = typeof it.lastSeen === "number" ? it.lastSeen : null;
+      if (typeof ls === "number") {
+        const year = new Date(ls).getFullYear();
+        const key = String(year);
+        if (key in buckets) buckets[key] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per year (3y)",
+          data: labels.map((l) => buckets[l]),
+          backgroundColor: "rgba(0, 18, 25, 0.5)", // #001219
+          borderColor: "rgba(0, 18, 25, 1)",
+        },
+      ],
+    };
+  }, [statusMap]);
+
   if (loading) {
     return (
       <div className="container py-4">
@@ -151,9 +216,12 @@ export default function AdminPage() {
       `}</style>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
-          <div className="container-fluid">
-            <a className="navbar-brand fw-semibold" href="#devices">
-              ESP32 Dashboard
+          <div className="container">
+            <a
+              className="navbar-brand fw-semibold d-flex align-items-center"
+              href="/"
+            >
+              <i className="fa fa-car" aria-hidden="true" />
             </a>
 
             <button
@@ -187,50 +255,13 @@ export default function AdminPage() {
                 </li>
               </ul>
               <div className="d-flex align-items-center gap-2">
-                <Link
-                  to="/"
-                  className="btn btn-sm btn-outline-light"
-                  title="Home"
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/admin"
-                  className="btn btn-sm btn-outline-light"
-                  title="Admin settings"
-                >
-                  <i className="fa fa-cog" aria-hidden="true" />
-                </Link>
                 {user && (
                   <>
                     <span className="text-white small d-none d-md-inline">
                       {(user as any)?.attributes?.email ||
                         (user as any)?.username}
                     </span>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-light"
-                      onClick={() => {
-                        const cur =
-                          document.documentElement.getAttribute("data-theme");
-                        const next = cur === "dark" ? "light" : "dark";
-                        document.documentElement.setAttribute(
-                          "data-theme",
-                          next
-                        );
-                        try {
-                          localStorage.setItem("theme", next);
-                        } catch {}
-                      }}
-                      title="Toggle dark/light"
-                    >
-                      {document.documentElement.getAttribute("data-theme") ===
-                      "dark" ? (
-                        <i className="fa fa-sun" aria-hidden="true" />
-                      ) : (
-                        <i className="fa fa-moon" aria-hidden="true" />
-                      )}
-                    </button>
+                    {/* Removed dark/light toggle and sun/moon icons */}
                     <button
                       className="btn btn-sm btn-outline-light"
                       onClick={() => signOut()}
@@ -246,13 +277,92 @@ export default function AdminPage() {
         </nav>
       </header>
 
-      <main className="flex-grow-1 py-4">
+      <main
+        className="flex-grow-1 py-4"
+        style={{ backgroundColor: "var(--bg)" }}
+      >
         <div className="container py-4">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1 className="h5 mb-0 text-primary">Admin Panel</h1>
           </div>
 
           {/* Access denied message removed as requested */}
+
+          {/* Charts: daily, monthly, yearly */}
+          <div className="row g-3 mb-3">
+            <div className="col-12">
+              <div className="card">
+                <div className="card-header">
+                  Daily online devices (last 7 days)
+                </div>
+                <div className="card-body" style={{ height: 240 }}>
+                  <Bar
+                    data={dailyData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: true, position: "bottom" },
+                      },
+                      scales: {
+                        x: { title: { display: true, text: "Day" } },
+                        y: { beginAtZero: true },
+                      },
+                    }}
+                    plugins={[chartBgPlugin]}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-12">
+              <div className="card">
+                <div className="card-header">
+                  Monthly online devices (last 12 months)
+                </div>
+                <div className="card-body" style={{ height: 240 }}>
+                  <Bar
+                    data={monthlyData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: true, position: "bottom" },
+                      },
+                      scales: {
+                        x: { title: { display: true, text: "Month" } },
+                        y: { beginAtZero: true },
+                      },
+                    }}
+                    plugins={[chartBgPlugin]}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-12">
+              <div className="card">
+                <div className="card-header">
+                  Yearly online devices (last 3 years)
+                </div>
+                <div className="card-body" style={{ height: 240 }}>
+                  <Bar
+                    data={yearlyData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: true, position: "bottom" },
+                      },
+                      scales: {
+                        x: { title: { display: true, text: "Year" } },
+                        y: { beginAtZero: true },
+                      },
+                    }}
+                    plugins={[chartBgPlugin]}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Invite admin container removed as requested */}
           <div id="devices" className="card admin-card-shadow">
@@ -314,7 +424,10 @@ export default function AdminPage() {
         </div>
       </main>
 
-      <section className="py-4 bg-white border-top mt-auto">
+      <section
+        className="py-4 border-top mt-auto"
+        style={{ backgroundColor: "var(--card-bg)" }}
+      >
         <div className="container text-center small text-muted">
           Admin section
         </div>
