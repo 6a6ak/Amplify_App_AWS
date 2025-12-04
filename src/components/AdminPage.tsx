@@ -192,7 +192,13 @@ export default function AdminPage() {
 
   return (
     <div className="d-flex flex-column min-vh-100 pt-5">
-      <style>{`.admin-gradient{background:linear-gradient(90deg,#0d6efd 0%,#20c997 50%,#6610f2 100%)} .admin-card-shadow{box-shadow:0 .3rem .8rem rgba(0,0,0,.08)} .table-status .badge{min-width:64px} .status-map-header{background:#ff8c00;color:#fff;border-bottom:1px solid rgba(255,255,255,0.18)} .status-map-header .small{color:#0b1220} .status-count{font-weight:600; background:#0b1220; color:#ffffff; padding:0.15rem 0.5rem; border-radius:0.35rem; display:inline-block; margin:0 0.25rem} .table-status thead th{background:transparent;border-bottom:1px solid rgba(255,255,255,0.08); color: #fff} .table-status td, .table-status th{vertical-align:middle}`}</style>
+      <style>{`.admin-gradient{background:linear-gradient(90deg,#0d6efd 0%,#20c997 50%,#6610f2 100%)} .admin-card-shadow{box-shadow:0 .3rem .8rem rgba(0,0,0,.08)} .table-status .badge{min-width:64px} .status-map-header{background:#ff8c00;color:#fff;border-bottom:1px solid rgba(255,255,255,0.18)} .status-map-header .small{color:#0b1220} .status-count{font-weight:600; background:#0b1220; color:#ffffff; padding:0.15rem 0.5rem; border-radius:0.35rem; display:inline-block; margin:0 0.25rem} .table-status thead th{background:transparent;border-bottom:1px solid rgba(255,255,255,0.08); color: #fff} .table-status td, .table-status th{vertical-align:middle}
+    /* Refresh icon styles */
+    .status-map-header .refresh-btn{padding:0.2rem 0.45rem;display:inline-flex;align-items:center;gap:0.5rem}
+    .status-map-header .refresh-icon{width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0b1220;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.12);transition:transform .2s linear}
+    .status-map-header .refresh-icon.refreshing{animation:spin 1s linear infinite}
+    .status-map-header .refresh-btn[disabled] .refresh-icon{opacity:0.6}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
           <div className="container">
@@ -276,12 +282,21 @@ export default function AdminPage() {
               <div className="d-flex align-items-center gap-2">
                 <button
                   type="button"
-                  className="btn btn-sm btn-outline-light"
+                  className="btn btn-sm btn-outline-light text-dark refresh-btn"
                   onClick={refreshStatusMap}
                   disabled={isRefreshing}
                   title={isRefreshing ? "Refreshing…" : "Refresh device status"}
                 >
-                  {isRefreshing ? "Refreshing…" : "Refresh"}
+                  <span
+                    className={
+                      "refresh-icon" + (isRefreshing ? " refreshing" : "")
+                    }
+                  >
+                    <i className="fa fa-sync" aria-hidden="true" />
+                  </span>
+                  <span className="d-none d-sm-inline">
+                    {isRefreshing ? "Refreshing…" : "Refresh"}
+                  </span>
                 </button>
               </div>
             </div>
