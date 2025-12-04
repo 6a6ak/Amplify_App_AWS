@@ -266,6 +266,12 @@ export default function AdminPage() {
     .status-map-header .refresh-btn[disabled] .refresh-icon{opacity:0.6}
     /* Dark card header style to match other headers */
     .card-header-dark{background:var(--card-bg);color:var(--text);border-bottom:1px solid rgba(255,255,255,0.06)}
+    /* Specific selector requested: style the third .card's first child (header) */
+    div.card:nth-child(3) > div:nth-child(1) {
+      background: var(--card-bg) !important;
+      color: var(--text) !important;
+      border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+    }
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
@@ -457,7 +463,7 @@ export default function AdminPage() {
           <div className="row g-3 mb-3">
             <div className="col-12">
               <div className="card">
-                <div className="card-header">
+                <div className="card-header card-header-dark">
                   Daily online devices (last 7 days)
                 </div>
                 <div className="card-body" style={{ height: 240 }}>
@@ -481,7 +487,7 @@ export default function AdminPage() {
             </div>
             <div className="col-12">
               <div className="card">
-                <div className="card-header">
+                <div className="card-header card-header-dark">
                   Monthly online devices (last 12 months)
                 </div>
                 <div className="card-body" style={{ height: 240 }}>
@@ -505,7 +511,7 @@ export default function AdminPage() {
             </div>
             <div className="col-12">
               <div className="card">
-                <div className="card-header">
+                <div className="card-header card-header-dark">
                   Yearly online devices (last 3 years)
                 </div>
                 <div className="card-body" style={{ height: 240 }}>
