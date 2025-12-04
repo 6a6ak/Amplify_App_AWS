@@ -19,6 +19,10 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+// Import slideshow images from src/assets/img for reliable bundling
+import slide1 from "./assets/img/slider.png";
+import slide2 from "./assets/img/slider01.png";
+import slide3 from "./assets/img/slider02.png";
 
 // Plugin to paint line chart canvas background creamy off-white
 const chartBgPlugin = {
@@ -302,7 +306,7 @@ function App() {
             <div className="carousel-inner rounded-3 overflow-hidden">
               <div className="carousel-item active">
                 <img
-                  src="/images/slider.png"
+                  src={slide1}
                   className="d-block w-100"
                   alt="Roadside sensor and vehicle"
                 />
@@ -313,7 +317,7 @@ function App() {
               </div>
               <div className="carousel-item">
                 <img
-                  src="/images/slider01.png"
+                  src={slide2}
                   className="d-block w-100"
                   alt="Sensor close-up"
                 />
@@ -324,7 +328,7 @@ function App() {
               </div>
               <div className="carousel-item">
                 <img
-                  src="/images/slider02.png"
+                  src={slide3}
                   className="d-block w-100"
                   alt="Car passing by"
                 />
@@ -430,7 +434,7 @@ function App() {
               className="card-header border-0 d-flex justify-content-between align-items-center"
               style={{ backgroundColor: "var(--card-bg)" }}
             >
-              <h1 className="h5 mb-0">ESP32 Fleet Devices</h1>
+              <h1 className="h5 mb-0">ESP Devices</h1>
               <span className="badge bg-info">
                 Total devices: {devices.length}
               </span>

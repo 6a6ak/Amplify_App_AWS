@@ -99,3 +99,8 @@ body.bg-light {
     height: 240px; /* smaller on mobile */
   }
 }
+
+/* Make utility heading `.h5.mb-0` stand out with an orange color */
+.h5.mb-0 {
+  color: #ff8c00 !important; /* orange */
+}
