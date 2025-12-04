@@ -464,7 +464,7 @@ function App() {
               <h2 className="h6 mb-0">Fleet Activity</h2>
             </div>
             <div className="card-body overflow-hidden">
-              <div className="mb-3" style={{ height: 220 }}>
+              <div className="mb-5" style={{ height: 220 }}>
                 <h3 className="h6 mb-2">Daily (7d)</h3>
                 <Line
                   data={dailyData}
@@ -482,7 +482,7 @@ function App() {
                   plugins={[chartBgPlugin]}
                 />
               </div>
-              <div className="mb-3" style={{ height: 220 }}>
+              <div className="mb-5" style={{ height: 220 }}>
                 <h3 className="h6 mb-2">Monthly (12m)</h3>
                 <Line
                   data={monthlyData}
@@ -500,7 +500,7 @@ function App() {
                   plugins={[chartBgPlugin]}
                 />
               </div>
-              <div className="mb-1" style={{ height: 220 }}>
+              <div className="mb-5" style={{ height: 220 }}>
                 <h3 className="h6 mb-2">Yearly (3y)</h3>
                 <Line
                   data={yearlyData}
@@ -520,7 +520,6 @@ function App() {
               </div>
             </div>
           </div>
-          /* devices block removed (moved above the charts) */
         </div>
       </main>
 
