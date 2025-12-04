@@ -252,50 +252,9 @@ export default function AdminPage() {
             <h1 className="h5 mb-0 text-primary">Admin Panel</h1>
           </div>
 
-          {!isAdmin && (
-            <div className="alert alert-warning mb-4">
-              Access denied. You must be in the 'admin' group.
-            </div>
-          )}
+          {/* Access denied message removed as requested */}
 
-          <div id="invite" className="card mb-4 admin-card-shadow">
-            <div className="card-header bg-info bg-opacity-10">
-              Invite Admin User
-            </div>
-            <div className="card-body">
-              <form onSubmit={invite} className="row g-2">
-                <div className="col-12 col-md-6">
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="admin@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="col-12 col-md-4">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Temp password (optional)"
-                    value={tempPassword}
-                    onChange={(e) => setTempPassword(e.target.value)}
-                  />
-                </div>
-                <div className="col-12 col-md-2 d-grid">
-                  <button type="submit" className="btn btn-primary">
-                    Invite
-                  </button>
-                </div>
-              </form>
-              {status && <div className="mt-2 small">{status}</div>}
-              <div className="mt-2 small text-muted">
-                Dev-only action: calls /api/admin/users. For production, expose
-                a secured Lambda that performs AdminCreateUser.
-              </div>
-            </div>
-          </div>
+          {/* Invite admin container removed as requested */}
           <div id="devices" className="card admin-card-shadow">
             <div className="card-header d-flex justify-content-between align-items-center bg-warning bg-opacity-10">
               <span>Device Status Map</span>

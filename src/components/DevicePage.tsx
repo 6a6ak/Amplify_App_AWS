@@ -1,5 +1,16 @@
 import React from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 function useDevices() {
   const [devices, setDevices] = React.useState<any[]>([]);
@@ -33,6 +44,107 @@ function useDevices() {
 
 export function DeviceList() {
   const { devices, loading, error } = useDevices();
+
+  const dailyData = React.useMemo(() => {
+    const now = Date.now();
+    const buckets: Record<string, number> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now - i * 24 * 3600 * 1000);
+      const key = d.toLocaleDateString();
+      buckets[key] = 0;
+    }
+    devices.forEach((dev) => {
+      const ls =
+        typeof dev.lastSeen === "number"
+          ? dev.lastSeen
+          : dev.lastItem?.timestamp;
+      if (typeof ls === "number") {
+        const day = new Date(ls).toLocaleDateString();
+        if (day in buckets) buckets[day] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per day (7d)",
+          data: labels.map((l) => buckets[l]),
+          backgroundColor: "rgba(13, 110, 253, 0.5)",
+          borderColor: "rgba(13, 110, 253, 1)",
+        },
+      ],
+    };
+  }, [devices]);
+
+  const monthlyData = React.useMemo(() => {
+    const now = new Date();
+    const buckets: Record<string, number> = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${(d.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`;
+      buckets[key] = 0;
+    }
+    devices.forEach((dev) => {
+      const ls =
+        typeof dev.lastSeen === "number"
+          ? dev.lastSeen
+          : dev.lastItem?.timestamp;
+      if (typeof ls === "number") {
+        const dt = new Date(ls);
+        const key = `${dt.getFullYear()}-${(dt.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}`;
+        if (key in buckets) buckets[key] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per month (12m)",
+          data: labels.map((l) => buckets[l]),
+          backgroundColor: "rgba(32, 201, 151, 0.5)",
+          borderColor: "rgba(32, 201, 151, 1)",
+        },
+      ],
+    };
+  }, [devices]);
+
+  const yearlyData = React.useMemo(() => {
+    const now = new Date();
+    const buckets: Record<string, number> = {};
+    for (let i = 2; i >= 0; i--) {
+      const year = now.getFullYear() - i;
+      buckets[String(year)] = 0;
+    }
+    devices.forEach((dev) => {
+      const ls =
+        typeof dev.lastSeen === "number"
+          ? dev.lastSeen
+          : dev.lastItem?.timestamp;
+      if (typeof ls === "number") {
+        const year = new Date(ls).getFullYear();
+        const key = String(year);
+        if (key in buckets) buckets[key] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per year (3y)",
+          data: labels.map((l) => buckets[l]),
+          backgroundColor: "rgba(102, 16, 242, 0.5)",
+          borderColor: "rgba(102, 16, 242, 1)",
+        },
+      ],
+    };
+  }, [devices]);
 
   return (
     <div className="d-flex flex-column min-vh-100 pt-5">
@@ -90,6 +202,75 @@ export function DeviceList() {
           {loading && <p>Loading devices…</p>}
           {error && <p className="text-danger">{error}</p>}
           <div className="row g-3">
+            <div className="col-12">
+              <div className="card mb-3">
+                <div className="card-header">
+                  Daily online devices (last 7 days)
+                </div>
+                <div className="card-body" style={{ height: 240 }}>
+                  <Bar
+                    data={dailyData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: true, position: "bottom" },
+                      },
+                      scales: {
+                        x: { title: { display: true, text: "Day" } },
+                        y: { beginAtZero: true },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-12">
+              <div className="card mb-3">
+                <div className="card-header">
+                  Monthly online devices (last 12 months)
+                </div>
+                <div className="card-body" style={{ height: 240 }}>
+                  <Bar
+                    data={monthlyData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: true, position: "bottom" },
+                      },
+                      scales: {
+                        x: { title: { display: true, text: "Month" } },
+                        y: { beginAtZero: true },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-12">
+              <div className="card mb-3">
+                <div className="card-header">
+                  Yearly online devices (last 3 years)
+                </div>
+                <div className="card-body" style={{ height: 240 }}>
+                  <Bar
+                    data={yearlyData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: true, position: "bottom" },
+                      },
+                      scales: {
+                        x: { title: { display: true, text: "Year" } },
+                        y: { beginAtZero: true },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
             {devices.map((d) => (
               <div key={d.device_id} className="col-12 col-md-6 col-lg-4">
                 <div className="card h-100">
