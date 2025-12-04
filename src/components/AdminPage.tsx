@@ -187,9 +187,12 @@ export default function AdminPage() {
     };
   }, [statusMap]);
 
+  const onlineCount = statusMap.filter((s) => s.online).length;
+  const offlineCount = statusMap.length - onlineCount;
+
   return (
     <div className="d-flex flex-column min-vh-100 pt-5">
-      <style>{`.admin-gradient{background:linear-gradient(90deg,#0d6efd 0%,#20c997 50%,#6610f2 100%)} .admin-card-shadow{box-shadow:0 .3rem .8rem rgba(0,0,0,.08)} .table-status .badge{min-width:64px}`}</style>
+      <style>{`.admin-gradient{background:linear-gradient(90deg,#0d6efd 0%,#20c997 50%,#6610f2 100%)} .admin-card-shadow{box-shadow:0 .3rem .8rem rgba(0,0,0,.08)} .table-status .badge{min-width:64px} .status-map-header{background:#ff8c00;color:#fff} .status-count{font-weight:600; background:#fff; color:#ff8c00; padding:0.15rem 0.5rem; border-radius:0.35rem; display:inline-block; margin:0 0.25rem}`}</style>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
           <div className="container">
@@ -257,6 +260,73 @@ export default function AdminPage() {
         <div className="container py-4">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1 className="h5 mb-0 text-primary">Admin Panel</h1>
+          </div>
+
+          {/* Device Status Map (moved to top) */}
+          <div id="devices" className="card admin-card-shadow mb-3">
+            <div className="card-header d-flex justify-content-between align-items-center status-map-header">
+              <div>
+                <strong>Device Status Map</strong>
+                <div className="small ms-2 d-inline-block">
+                  &nbsp;&nbsp;
+                  <span className="status-count">{onlineCount}</span> Online •{" "}
+                  <span className="status-count">{offlineCount}</span> Offline
+                </div>
+              </div>
+              <div className="d-flex align-items-center gap-2">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-light"
+                  onClick={refreshStatusMap}
+                  disabled={isRefreshing}
+                  title={isRefreshing ? "Refreshing…" : "Refresh device status"}
+                >
+                  {isRefreshing ? "Refreshing…" : "Refresh"}
+                </button>
+              </div>
+            </div>
+            <div className="card-body p-0">
+              <div className="table-responsive">
+                <table className="table table-sm mb-0 table-status">
+                  <thead>
+                    <tr>
+                      <th>Device ID</th>
+                      <th>Last Seen</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {statusMap.map((it) => (
+                      <tr
+                        key={it.device_id}
+                        className={it.online ? "table-success" : "table-danger"}
+                      >
+                        <td>{it.device_id}</td>
+                        <td>
+                          {it.lastSeen
+                            ? new Date(it.lastSeen).toLocaleString()
+                            : "-"}
+                        </td>
+                        <td>
+                          {it.online ? (
+                            <span className="badge bg-success">Online</span>
+                          ) : (
+                            <span className="badge bg-danger">Offline</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {statusMap.length === 0 && (
+                      <tr>
+                        <td colSpan={3} className="text-muted small">
+                          No items
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
           {/* Charts: daily, monthly, yearly */}
@@ -335,63 +405,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Device Status Map on top */}
-          <div id="devices" className="card admin-card-shadow">
-            <div className="card-header d-flex justify-content-between align-items-center bg-warning bg-opacity-10">
-              <span>Device Status Map</span>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-secondary"
-                onClick={refreshStatusMap}
-                disabled={isRefreshing}
-                title={isRefreshing ? "Refreshing…" : "Refresh device status"}
-              >
-                {isRefreshing ? "Refreshing…" : "Refresh"}
-              </button>
-            </div>
-            <div className="card-body p-0">
-              <div className="table-responsive">
-                <table className="table table-sm mb-0 table-status">
-                  <thead>
-                    <tr>
-                      <th>Device ID</th>
-                      <th>Last Seen</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {statusMap.map((it) => (
-                      <tr
-                        key={it.device_id}
-                        className={it.online ? "table-success" : "table-danger"}
-                      >
-                        <td>{it.device_id}</td>
-                        <td>
-                          {it.lastSeen
-                            ? new Date(it.lastSeen).toLocaleString()
-                            : "-"}
-                        </td>
-                        <td>
-                          {it.online ? (
-                            <span className="badge bg-success">Online</span>
-                          ) : (
-                            <span className="badge bg-danger">Offline</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                    {statusMap.length === 0 && (
-                      <tr>
-                        <td colSpan={3} className="text-muted small">
-                          No items
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          {/* Device Status Map duplicated block removed (moved above) */}
         </div>
       </main>
 

@@ -104,3 +104,27 @@ body.bg-light {
 .h5.mb-0 {
   color: #ff8c00 !important; /* orange */
 }
+
+/* Center Amplify Authenticator and match site background without changing form colors */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg); /* same as site background */
+}
+
+/* Ensure the authenticator's container centers but preserve the internal form styling */
+.auth-wrapper .amplify-authenticator,
+.auth-wrapper amplify-authenticator,
+.auth-wrapper .amplify-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Keep the form panel's own colors (don't override input/button colors) but limit width */
+.auth-wrapper .amplify-form-section,
+.auth-wrapper .amplify-form {
+  max-width: 420px;
+  width: 100%;
+}

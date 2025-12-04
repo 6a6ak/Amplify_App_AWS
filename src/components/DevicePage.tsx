@@ -12,6 +12,8 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
+const ONLINE_WINDOW_MS = 30 * 1000;
+
 // Plugin to paint chart canvas background creamy off-white
 const chartBgPlugin = {
   id: "chartBgPlugin",
@@ -435,12 +437,27 @@ export default function DevicePage() {
             <div className="card">
               <div className="card-header d-flex align-items-center gap-3">
                 <span className="badge bg-info">Overview</span>
-                <span className="small text-muted">
-                  Last seen:{" "}
-                  {device.lastSeen
-                    ? new Date(device.lastSeen).toLocaleString()
-                    : "-"}
-                </span>
+                <div className="d-flex align-items-center gap-2">
+                  <span
+                    className={`badge ${
+                      device.lastSeen &&
+                      Date.now() - device.lastSeen < ONLINE_WINDOW_MS
+                        ? "bg-success"
+                        : "bg-secondary"
+                    }`}
+                  >
+                    {device.lastSeen &&
+                    Date.now() - device.lastSeen < ONLINE_WINDOW_MS
+                      ? "Online"
+                      : "Offline"}
+                  </span>
+                  <span className="small text-muted">
+                    Last seen:{" "}
+                    {device.lastSeen
+                      ? new Date(device.lastSeen).toLocaleString()
+                      : "-"}
+                  </span>
+                </div>
               </div>
               <div className="card-body">
                 <div className="row g-3">
@@ -480,14 +497,51 @@ export default function DevicePage() {
                   </div>
                   <div className="col-12 col-md-4">
                     <div className="card h-100">
-                      <div className="card-header">Telemetry</div>
+                      <div className="card-header d-flex justify-content-between align-items-center">
+                        <span>Telemetry</span>
+                        <div>
+                          <button
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={() =>
+                              navigator.clipboard?.writeText(
+                                JSON.stringify(device.lastItem || {}, null, 2)
+                              )
+                            }
+                            title="Copy JSON"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                      </div>
                       <div className="card-body">
-                        <pre
-                          className="small mb-0"
-                          style={{ whiteSpace: "pre-wrap" }}
-                        >
-                          {JSON.stringify(device.lastItem, null, 2)}
-                        </pre>
+                        {device.lastItem &&
+                        typeof device.lastItem === "object" ? (
+                          <table className="table table-sm mb-0">
+                            <tbody>
+                              {Object.entries(device.lastItem).map(([k, v]) => (
+                                <tr key={k}>
+                                  <th
+                                    style={{ width: "40%" }}
+                                    className="align-top"
+                                  >
+                                    {k}
+                                  </th>
+                                  <td className="small">
+                                    {v === null || v === undefined
+                                      ? "—"
+                                      : typeof v === "object"
+                                      ? JSON.stringify(v)
+                                      : String(v)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className="small text-muted">
+                            No telemetry available.
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

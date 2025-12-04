@@ -26,33 +26,35 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <Route
         path="/admin"
         element={
-          <Authenticator
-            initialState="signIn"
-            loginMechanisms={["email"]}
-            formFields={{
-              signIn: {
-                username: {
-                  label: "Email",
-                  type: "email",
-                  placeholder: "you@example.com",
-                  autocomplete: "email",
+          <div className="auth-wrapper">
+            <Authenticator
+              initialState="signIn"
+              loginMechanisms={["email"]}
+              formFields={{
+                signIn: {
+                  username: {
+                    label: "Email",
+                    type: "email",
+                    placeholder: "you@example.com",
+                    autocomplete: "email",
+                  },
                 },
-              },
-              signUp: {
-                username: {
-                  label: "Email",
-                  type: "email",
-                  placeholder: "you@example.com",
-                  autocomplete: "email",
+                signUp: {
+                  username: {
+                    label: "Email",
+                    type: "email",
+                    placeholder: "you@example.com",
+                    autocomplete: "email",
+                  },
+                  password: {
+                    label: "Password",
+                  },
                 },
-                password: {
-                  label: "Password",
-                },
-              },
-            }}
-          >
-            <AdminPage />
-          </Authenticator>
+              }}
+            >
+              <AdminPage />
+            </Authenticator>
+          </div>
         }
       />
     </Routes>
