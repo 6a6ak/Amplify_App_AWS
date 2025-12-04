@@ -364,71 +364,7 @@ function App() {
             </button>
           </div>
           {/* Aggregated charts section */}
-          <div className="card shadow-sm mb-4">
-            <div
-              className="card-header border-0 d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: "var(--card-bg)" }}
-            >
-              <h2 className="h6 mb-0">Fleet Activity</h2>
-            </div>
-            <div className="card-body overflow-hidden">
-              <div className="mb-3" style={{ height: 220 }}>
-                <h3 className="h6 mb-2">Daily (7d)</h3>
-                <Line
-                  data={dailyData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: true, position: "bottom" },
-                    },
-                    scales: {
-                      x: { title: { display: true, text: "Day" } },
-                      y: { beginAtZero: true },
-                    },
-                  }}
-                  plugins={[chartBgPlugin]}
-                />
-              </div>
-              <div className="mb-3" style={{ height: 220 }}>
-                <h3 className="h6 mb-2">Monthly (12m)</h3>
-                <Line
-                  data={monthlyData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: true, position: "bottom" },
-                    },
-                    scales: {
-                      x: { title: { display: true, text: "Month" } },
-                      y: { beginAtZero: true },
-                    },
-                  }}
-                  plugins={[chartBgPlugin]}
-                />
-              </div>
-              <div className="mb-1" style={{ height: 220 }}>
-                <h3 className="h6 mb-2">Yearly (3y)</h3>
-                <Line
-                  data={yearlyData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: true, position: "bottom" },
-                    },
-                    scales: {
-                      x: { title: { display: true, text: "Year" } },
-                      y: { beginAtZero: true },
-                    },
-                  }}
-                  plugins={[chartBgPlugin]}
-                />
-              </div>
-            </div>
-          </div>
-
+          {/* Devices list - moved up to appear right after the hero slider */}
           <div className="card shadow-sm">
             <div
               className="card-header border-0 d-flex justify-content-between align-items-center"
@@ -520,6 +456,71 @@ function App() {
               </div>
             </div>
           </div>
+          <div className="card shadow-sm mb-4">
+            <div
+              className="card-header border-0 d-flex justify-content-between align-items-center"
+              style={{ backgroundColor: "var(--card-bg)" }}
+            >
+              <h2 className="h6 mb-0">Fleet Activity</h2>
+            </div>
+            <div className="card-body overflow-hidden">
+              <div className="mb-3" style={{ height: 220 }}>
+                <h3 className="h6 mb-2">Daily (7d)</h3>
+                <Line
+                  data={dailyData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: true, position: "bottom" },
+                    },
+                    scales: {
+                      x: { title: { display: true, text: "Day" } },
+                      y: { beginAtZero: true },
+                    },
+                  }}
+                  plugins={[chartBgPlugin]}
+                />
+              </div>
+              <div className="mb-3" style={{ height: 220 }}>
+                <h3 className="h6 mb-2">Monthly (12m)</h3>
+                <Line
+                  data={monthlyData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: true, position: "bottom" },
+                    },
+                    scales: {
+                      x: { title: { display: true, text: "Month" } },
+                      y: { beginAtZero: true },
+                    },
+                  }}
+                  plugins={[chartBgPlugin]}
+                />
+              </div>
+              <div className="mb-1" style={{ height: 220 }}>
+                <h3 className="h6 mb-2">Yearly (3y)</h3>
+                <Line
+                  data={yearlyData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: true, position: "bottom" },
+                    },
+                    scales: {
+                      x: { title: { display: true, text: "Year" } },
+                      y: { beginAtZero: true },
+                    },
+                  }}
+                  plugins={[chartBgPlugin]}
+                />
+              </div>
+            </div>
+          </div>
+          /* devices block removed (moved above the charts) */
         </div>
       </main>
 

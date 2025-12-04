@@ -6,8 +6,8 @@
 #define SECRET
 
 // WiFi credentials
-const char WIFI_SSID[] = "4-1328";
-const char WIFI_PASSWORD[] = "rzjpRPXpRg";
+const char WIFI_SSID[] = "Tele3";
+const char WIFI_PASSWORD[] = "password";
 
 // Your AWS IoT custom endpoint
 const char AWS_IOT_ENDPOINT[] = "a2v6h6fq7j6lhc-ats.iot.eu-central-1.amazonaws.com";
