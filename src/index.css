@@ -88,3 +88,14 @@ body.bg-light {
 .badge.text-dark {
   color: #ffffff !important;
 }
+
+/* Hero carousel: keep a reasonable standard height */
+#heroCarousel .carousel-item img {
+  height: 360px; /* standard hero height */
+  object-fit: cover; /* crop to fit without distortion */
+}
+@media (max-width: 576px) {
+  #heroCarousel .carousel-item img {
+    height: 240px; /* smaller on mobile */
+  }
+}

@@ -106,6 +106,111 @@ function App() {
     };
   }, [devices]);
 
+  // Aggregated charts: daily, monthly, yearly counts and speed overview
+  const dailyData = React.useMemo(() => {
+    const now = Date.now();
+    const buckets: Record<string, number> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now - i * 24 * 3600 * 1000);
+      const key = d.toLocaleDateString();
+      buckets[key] = 0;
+    }
+    devices.forEach((dev) => {
+      const ls =
+        typeof dev.lastSeen === "number"
+          ? dev.lastSeen
+          : dev.lastItem?.timestamp;
+      if (typeof ls === "number") {
+        const day = new Date(ls).toLocaleDateString();
+        if (day in buckets) buckets[day] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per day (7d)",
+          data: labels.map((l) => buckets[l]),
+          borderColor: "rgba(10, 147, 150, 1)",
+          backgroundColor: "rgba(10, 147, 150, 0.2)",
+          tension: 0.3,
+        },
+      ],
+    };
+  }, [devices]);
+
+  const monthlyData = React.useMemo(() => {
+    const now = new Date();
+    const buckets: Record<string, number> = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${(d.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`;
+      buckets[key] = 0;
+    }
+    devices.forEach((dev) => {
+      const ls =
+        typeof dev.lastSeen === "number"
+          ? dev.lastSeen
+          : dev.lastItem?.timestamp;
+      if (typeof ls === "number") {
+        const dt = new Date(ls);
+        const key = `${dt.getFullYear()}-${(dt.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}`;
+        if (key in buckets) buckets[key] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per month (12m)",
+          data: labels.map((l) => buckets[l]),
+          borderColor: "rgba(0, 95, 115, 1)",
+          backgroundColor: "rgba(0, 95, 115, 0.2)",
+          tension: 0.3,
+        },
+      ],
+    };
+  }, [devices]);
+
+  const yearlyData = React.useMemo(() => {
+    const now = new Date();
+    const buckets: Record<string, number> = {};
+    for (let i = 2; i >= 0; i--) {
+      const year = now.getFullYear() - i;
+      buckets[String(year)] = 0;
+    }
+    devices.forEach((dev) => {
+      const ls =
+        typeof dev.lastSeen === "number"
+          ? dev.lastSeen
+          : dev.lastItem?.timestamp;
+      if (typeof ls === "number") {
+        const year = new Date(ls).getFullYear();
+        const key = String(year);
+        if (key in buckets) buckets[key] += 1;
+      }
+    });
+    const labels = Object.keys(buckets);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Devices seen per year (3y)",
+          data: labels.map((l) => buckets[l]),
+          borderColor: "rgba(0, 18, 25, 1)",
+          backgroundColor: "rgba(0, 18, 25, 0.2)",
+          tension: 0.3,
+        },
+      ],
+    };
+  }, [devices]);
+
   return (
     <div className="d-flex flex-column min-vh-100 pt-5">
       <header>
@@ -166,6 +271,160 @@ function App() {
         style={{ backgroundColor: "var(--bg)" }}
       >
         <div className="container mt-4">
+          {/* Hero slideshow (Bootstrap Carousel) */}
+          <div
+            id="heroCarousel"
+            className="carousel slide mb-4"
+            data-bs-ride="carousel"
+          >
+            <div className="carousel-indicators">
+              <button
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide-to="0"
+                className="active"
+                aria-current="true"
+                aria-label="Slide 1"
+              ></button>
+              <button
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide-to="1"
+                aria-label="Slide 2"
+              ></button>
+              <button
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide-to="2"
+                aria-label="Slide 3"
+              ></button>
+            </div>
+            <div className="carousel-inner rounded-3 overflow-hidden">
+              <div className="carousel-item active">
+                <img
+                  src="/images/slider.png"
+                  className="d-block w-100"
+                  alt="Roadside sensor and vehicle"
+                />
+                <div className="carousel-caption d-none d-md-block">
+                  <h5>Smart Roadside Sensing</h5>
+                  <p>Real-time telemetry from your fleet devices.</p>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img
+                  src="/images/slider01.png"
+                  className="d-block w-100"
+                  alt="Sensor close-up"
+                />
+                <div className="carousel-caption d-none d-md-block">
+                  <h5>Accurate Measurements</h5>
+                  <p>Speed, temperature, and more at a glance.</p>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img
+                  src="/images/slider02.png"
+                  className="d-block w-100"
+                  alt="Car passing by"
+                />
+                <div className="carousel-caption d-none d-md-block">
+                  <h5>Fleet Insights</h5>
+                  <p>Daily, monthly, yearly trends for decisions.</p>
+                </div>
+              </div>
+            </div>
+            <button
+              className="carousel-control-prev"
+              type="button"
+              data-bs-target="#heroCarousel"
+              data-bs-slide="prev"
+            >
+              <span
+                className="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span className="visually-hidden">Previous</span>
+            </button>
+            <button
+              className="carousel-control-next"
+              type="button"
+              data-bs-target="#heroCarousel"
+              data-bs-slide="next"
+            >
+              <span
+                className="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span className="visually-hidden">Next</span>
+            </button>
+          </div>
+          {/* Aggregated charts section */}
+          <div className="card shadow-sm mb-4">
+            <div
+              className="card-header border-0 d-flex justify-content-between align-items-center"
+              style={{ backgroundColor: "var(--card-bg)" }}
+            >
+              <h2 className="h6 mb-0">Fleet Activity</h2>
+            </div>
+            <div className="card-body overflow-hidden">
+              <div className="mb-3" style={{ height: 220 }}>
+                <h3 className="h6 mb-2">Daily (7d)</h3>
+                <Line
+                  data={dailyData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: true, position: "bottom" },
+                    },
+                    scales: {
+                      x: { title: { display: true, text: "Day" } },
+                      y: { beginAtZero: true },
+                    },
+                  }}
+                  plugins={[chartBgPlugin]}
+                />
+              </div>
+              <div className="mb-3" style={{ height: 220 }}>
+                <h3 className="h6 mb-2">Monthly (12m)</h3>
+                <Line
+                  data={monthlyData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: true, position: "bottom" },
+                    },
+                    scales: {
+                      x: { title: { display: true, text: "Month" } },
+                      y: { beginAtZero: true },
+                    },
+                  }}
+                  plugins={[chartBgPlugin]}
+                />
+              </div>
+              <div className="mb-1" style={{ height: 220 }}>
+                <h3 className="h6 mb-2">Yearly (3y)</h3>
+                <Line
+                  data={yearlyData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: true, position: "bottom" },
+                    },
+                    scales: {
+                      x: { title: { display: true, text: "Year" } },
+                      y: { beginAtZero: true },
+                    },
+                  }}
+                  plugins={[chartBgPlugin]}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="card shadow-sm">
             <div
               className="card-header border-0 d-flex justify-content-between align-items-center"

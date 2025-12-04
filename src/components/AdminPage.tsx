@@ -14,13 +14,11 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 export default function AdminPage() {
-  const ONLINE_WINDOW_MS = 30 * 1000; // consider online only if seen within 30s
-  const [loading, setLoading] = React.useState(true);
+  const ONLINE_WINDOW_MS = 30 * 1000;
   const [statusMap, setStatusMap] = React.useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const { user, signOut } = useAuthenticator((ctx) => [ctx.user, ctx.signOut]);
 
-  // Plugin to paint chart canvas background creamy off-white
   const chartBgPlugin = React.useMemo(
     () => ({
       id: "chartBgPlugin",
@@ -28,17 +26,13 @@ export default function AdminPage() {
         const { ctx, width, height } = chart;
         ctx.save();
         ctx.globalCompositeOperation = "destination-over";
-        ctx.fillStyle = "#f7f4ef"; // creamy off-white
+        ctx.fillStyle = "#f7f4ef";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
       },
     }),
     []
   );
-
-  React.useEffect(() => {
-    setLoading(false);
-  }, [user]);
 
   async function refreshStatusMap() {
     if (isRefreshing) return;
@@ -101,7 +95,6 @@ export default function AdminPage() {
     return () => clearInterval(id);
   }, []);
 
-  // Build chart datasets from status map
   const dailyData = React.useMemo(() => {
     const now = Date.now();
     const buckets: Record<string, number> = {};
@@ -124,7 +117,7 @@ export default function AdminPage() {
         {
           label: "Devices seen per day (7d)",
           data: labels.map((l) => buckets[l]),
-          backgroundColor: "rgba(10, 147, 150, 0.5)", // #0a9396
+          backgroundColor: "rgba(10, 147, 150, 0.5)",
           borderColor: "rgba(10, 147, 150, 1)",
         },
       ],
@@ -158,7 +151,7 @@ export default function AdminPage() {
         {
           label: "Devices seen per month (12m)",
           data: labels.map((l) => buckets[l]),
-          backgroundColor: "rgba(0, 95, 115, 0.5)", // #005f73
+          backgroundColor: "rgba(0, 95, 115, 0.5)",
           borderColor: "rgba(0, 95, 115, 1)",
         },
       ],
@@ -187,33 +180,16 @@ export default function AdminPage() {
         {
           label: "Devices seen per year (3y)",
           data: labels.map((l) => buckets[l]),
-          backgroundColor: "rgba(0, 18, 25, 0.5)", // #001219
+          backgroundColor: "rgba(0, 18, 25, 0.5)",
           borderColor: "rgba(0, 18, 25, 1)",
         },
       ],
     };
   }, [statusMap]);
 
-  if (loading) {
-    return (
-      <div className="container py-4">
-        <h1 className="h5">Admin</h1>
-        <div>Loading…</div>
-      </div>
-    );
-  }
-
-  // Always render page with navbar; show access message in content if not admin
-
   return (
     <div className="d-flex flex-column min-vh-100 pt-5">
-      <style>{`
-        .admin-gradient {
-          background: linear-gradient(90deg, #0d6efd 0%, #20c997 50%, #6610f2 100%);
-        }
-        .admin-card-shadow { box-shadow: 0 0.3rem 0.8rem rgba(0,0,0,0.08); }
-        .table-status .badge { min-width: 64px; }
-      `}</style>
+      <style>{`.admin-gradient{background:linear-gradient(90deg,#0d6efd 0%,#20c997 50%,#6610f2 100%)} .admin-card-shadow{box-shadow:0 .3rem .8rem rgba(0,0,0,.08)} .table-status .badge{min-width:64px}`}</style>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
           <div className="container">
@@ -223,7 +199,6 @@ export default function AdminPage() {
             >
               <i className="fa fa-car" aria-hidden="true" />
             </a>
-
             <button
               className="navbar-toggler"
               type="button"
@@ -235,7 +210,6 @@ export default function AdminPage() {
             >
               <span className="navbar-toggler-icon" />
             </button>
-
             <div className="collapse navbar-collapse" id="navbarContent">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
@@ -261,7 +235,6 @@ export default function AdminPage() {
                       {(user as any)?.attributes?.email ||
                         (user as any)?.username}
                     </span>
-                    {/* Removed dark/light toggle and sun/moon icons */}
                     <button
                       className="btn btn-sm btn-outline-light"
                       onClick={() => signOut()}
@@ -285,8 +258,6 @@ export default function AdminPage() {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1 className="h5 mb-0 text-primary">Admin Panel</h1>
           </div>
-
-          {/* Access denied message removed as requested */}
 
           {/* Charts: daily, monthly, yearly */}
           <div className="row g-3 mb-3">
@@ -364,7 +335,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Invite admin container removed as requested */}
+          {/* Device Status Map on top */}
           <div id="devices" className="card admin-card-shadow">
             <div className="card-header d-flex justify-content-between align-items-center bg-warning bg-opacity-10">
               <span>Device Status Map</span>
