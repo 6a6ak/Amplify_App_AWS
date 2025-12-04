@@ -16,6 +16,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 export default function AdminPage() {
   const ONLINE_WINDOW_MS = 30 * 1000;
   const [statusMap, setStatusMap] = React.useState<any[]>([]);
+  const [topSpeeds, setTopSpeeds] = React.useState<Array<any>>([]);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const { user, signOut } = useAuthenticator((ctx) => [ctx.user, ctx.signOut]);
 
@@ -55,6 +56,37 @@ export default function AdminPage() {
             return { device_id: it.device_id, lastSeen: last, online };
           });
           setStatusMap(normalized);
+          // try to extract plate/speed info if available in items
+          try {
+            const speeds: Array<any> = [];
+            items.forEach((it: any) => {
+              const plate = it.lastItem?.plate || it.plate || null;
+              const speed =
+                typeof it.lastItem?.speed === "number"
+                  ? it.lastItem.speed
+                  : typeof it.speed === "number"
+                  ? it.speed
+                  : null;
+              const ts =
+                typeof it.lastItem?.timestamp === "number"
+                  ? it.lastItem.timestamp
+                  : it.timestamp ?? null;
+              if (plate && typeof speed === "number")
+                speeds.push({ plate, speed, device_id: it.device_id, ts });
+            });
+            if (speeds.length > 0) {
+              // reduce to best speed per plate
+              const byPlate: Record<string, any> = {};
+              speeds.forEach((s) => {
+                const existing = byPlate[s.plate];
+                if (!existing || s.speed > existing.speed) byPlate[s.plate] = s;
+              });
+              const list = Object.values(byPlate)
+                .sort((a: any, b: any) => b.speed - a.speed)
+                .slice(0, 5);
+              setTopSpeeds(list);
+            }
+          } catch (e) {}
           return;
         }
       }
@@ -83,6 +115,40 @@ export default function AdminPage() {
         return { device_id: d.device_id, lastSeen: last, online };
       });
       setStatusMap(mapped);
+      // compute top speeds by plate from device list
+      try {
+        const speeds: Array<any> = [];
+        list.forEach((d: any) => {
+          const plate = d.lastItem?.plate || d.plate || null;
+          const speed =
+            typeof d.lastItem?.speed === "number"
+              ? d.lastItem.speed
+              : typeof d.speed === "number"
+              ? d.speed
+              : null;
+          const ts =
+            typeof d.lastItem?.timestamp === "number"
+              ? d.lastItem.timestamp
+              : d.lastItem?.ts ?? null;
+          if (plate && typeof speed === "number")
+            speeds.push({ plate, speed, device_id: d.device_id, ts });
+        });
+        if (speeds.length > 0) {
+          const byPlate: Record<string, any> = {};
+          speeds.forEach((s) => {
+            const existing = byPlate[s.plate];
+            if (!existing || s.speed > existing.speed) byPlate[s.plate] = s;
+          });
+          const top = Object.values(byPlate)
+            .sort((a: any, b: any) => b.speed - a.speed)
+            .slice(0, 5);
+          setTopSpeeds(top);
+        } else {
+          setTopSpeeds([]);
+        }
+      } catch (e) {
+        setTopSpeeds([]);
+      }
     } catch {
     } finally {
       setIsRefreshing(false);
@@ -198,6 +264,8 @@ export default function AdminPage() {
     .status-map-header .refresh-icon{width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0b1220;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.12);transition:transform .2s linear}
     .status-map-header .refresh-icon.refreshing{animation:spin 1s linear infinite}
     .status-map-header .refresh-btn[disabled] .refresh-icon{opacity:0.6}
+    /* Dark card header style to match other headers */
+    .card-header-dark{background:var(--card-bg);color:var(--text);border-bottom:1px solid rgba(255,255,255,0.06)}
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
@@ -335,6 +403,47 @@ export default function AdminPage() {
                       <tr>
                         <td colSpan={3} className="text-muted small">
                           No items
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Top 5 highest speeds by plate */}
+          <div className="card mb-3">
+            <div className="card-header card-header-dark">
+              Top 5 Speeds (by plate)
+            </div>
+            <div className="card-body p-0">
+              <div className="table-responsive">
+                <table className="table table-sm mb-0">
+                  <thead>
+                    <tr>
+                      <th>Plate</th>
+                      <th>Speed</th>
+                      <th>Device</th>
+                      <th>Seen</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topSpeeds.length > 0 ? (
+                      topSpeeds.map((s) => (
+                        <tr key={`${s.plate}-${s.device_id}`}>
+                          <td>{s.plate}</td>
+                          <td>{s.speed}</td>
+                          <td>{s.device_id}</td>
+                          <td className="small text-muted">
+                            {s.ts ? new Date(s.ts).toLocaleString() : "-"}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="text-muted small">
+                          No speed data available
                         </td>
                       </tr>
                     )}
