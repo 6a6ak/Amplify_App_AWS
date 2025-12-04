@@ -1,6 +1,6 @@
 :root {
   /* Site background behind all containers */
-  --bg: #1d3557; /* deep blue */
+  --bg: rgb(15, 27, 41); /* user requested: rgb(15,27,41) */
   --text: #e6edf3;
   --card-bg: #002b36; /* very dark cyan/blue surface */
   --card-border: #003845; /* subtle darker border */
@@ -9,7 +9,7 @@
 }
 
 [data-theme="dark"] {
-  --bg: #1d3557;
+  --bg: rgb(15, 27, 41);
   --text: #e6edf3;
   --card-bg: #002b36;
   --card-border: #003845;
@@ -26,6 +26,16 @@ body {
   background: var(--bg);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+}
+
+/* Ensure fixed navbars appear above other content */
+.navbar.fixed-top {
+  z-index: 2000;
+}
+
+/* Force navbar link visibility on dark backgrounds */
+.navbar .nav-link {
+  color: #ffffff !important;
 }
 
 /* Prevent Bootstrap bg-light utilities from overriding page background */

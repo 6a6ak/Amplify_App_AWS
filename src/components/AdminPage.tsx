@@ -264,13 +264,17 @@ export default function AdminPage() {
     .status-map-header .refresh-icon{width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0b1220;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.12);transition:transform .2s linear}
     .status-map-header .refresh-icon.refreshing{animation:spin 1s linear infinite}
     .status-map-header .refresh-btn[disabled] .refresh-icon{opacity:0.6}
-    /* Dark card header style to match other headers */
-    .card-header-dark{background:var(--card-bg);color:var(--text);border-bottom:1px solid rgba(255,255,255,0.06)}
-    /* Specific selector requested: style the third .card's first child (header) */
-    div.card:nth-child(3) > div:nth-child(1) {
-      background: var(--card-bg) !important;
-      color: var(--text) !important;
-      border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+    /* Dark card header style to match other headers - use high contrast for charts */
+    .card-header-dark{
+      background: linear-gradient(90deg,#0b1220 0%,#18202a 100%);
+      color: #ffffff;
+      border-bottom:1px solid rgba(255,255,255,0.12);
+    }
+    /* Daily chart card header - explicit class for stability and consistent contrast */
+    .daily-chart-card > .card-header{
+      background: linear-gradient(90deg,#0b1220 0%,#18202a 100%);
+      color: #ffffff;
+      border-bottom:1px solid rgba(255,255,255,0.12);
     }
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
       <header>
@@ -306,9 +310,9 @@ export default function AdminPage() {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="#about">
+                  <Link className="nav-link" to="/about">
                     About
-                  </a>
+                  </Link>
                 </li>
               </ul>
               <div className="d-flex align-items-center gap-2">
@@ -462,7 +466,7 @@ export default function AdminPage() {
           {/* Charts: daily, monthly, yearly */}
           <div className="row g-3 mb-3">
             <div className="col-12">
-              <div className="card">
+              <div className="card daily-chart-card">
                 <div className="card-header card-header-dark">
                   Daily online devices (last 7 days)
                 </div>

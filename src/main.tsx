@@ -8,6 +8,7 @@ import outputs from "../amplify_outputs.json";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminPage from "./components/AdminPage";
 import DevicePage from "./components/DevicePage";
+import AboutPage from "./components/AboutPage";
 // Bootstrap styles & JS for navbar/toggler
 import "bootstrap/dist/css/bootstrap.min.css";
 // App styles should come after Bootstrap to override defaults
@@ -21,6 +22,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} />
+
+      <Route path="/about" element={<AboutPage />} />
       <Route path="/devices" element={<DevicePage />} />
       <Route path="/devices/:id" element={<DevicePage />} />
       <Route

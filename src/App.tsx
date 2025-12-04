@@ -252,9 +252,9 @@ function App() {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="#about">
+                  <Link className="nav-link" to="/about">
                     About
-                  </a>
+                  </Link>
                 </li>
               </ul>
               <Link

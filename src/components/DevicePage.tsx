@@ -196,9 +196,9 @@ export function DeviceList() {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="#about">
+                  <Link className="nav-link" to="/about">
                     About
-                  </a>
+                  </Link>
                 </li>
               </ul>
               <Link
@@ -368,9 +368,12 @@ export default function DevicePage() {
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
           <div className="container">
-            <a className="navbar-brand fw-semibold" href="#devices">
+            <Link
+              className="navbar-brand fw-semibold d-flex align-items-center"
+              to="/"
+            >
               <i className="fa fa-car" aria-hidden="true" />
-            </a>
+            </Link>
             <button
               className="navbar-toggler"
               type="button"
