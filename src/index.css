@@ -128,3 +128,10 @@ body.bg-light {
   max-width: 420px;
   width: 100%;
 }
+
+/* Make bold elements use a darker color to stand out when appropriate */
+b,
+strong {
+  color: #0b1220; /* dark navy/near-black */
+  font-weight: 700; /* ensure bold weight without Sass variable */
+}

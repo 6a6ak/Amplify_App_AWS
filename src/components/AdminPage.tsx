@@ -192,7 +192,7 @@ export default function AdminPage() {
 
   return (
     <div className="d-flex flex-column min-vh-100 pt-5">
-      <style>{`.admin-gradient{background:linear-gradient(90deg,#0d6efd 0%,#20c997 50%,#6610f2 100%)} .admin-card-shadow{box-shadow:0 .3rem .8rem rgba(0,0,0,.08)} .table-status .badge{min-width:64px} .status-map-header{background:#ff8c00;color:#fff} .status-count{font-weight:600; background:#fff; color:#ff8c00; padding:0.15rem 0.5rem; border-radius:0.35rem; display:inline-block; margin:0 0.25rem}`}</style>
+      <style>{`.admin-gradient{background:linear-gradient(90deg,#0d6efd 0%,#20c997 50%,#6610f2 100%)} .admin-card-shadow{box-shadow:0 .3rem .8rem rgba(0,0,0,.08)} .table-status .badge{min-width:64px} .status-map-header{background:#ff8c00;color:#fff;border-bottom:1px solid rgba(255,255,255,0.18)} .status-map-header .small{color:#0b1220} .status-count{font-weight:600; background:#0b1220; color:#ffffff; padding:0.15rem 0.5rem; border-radius:0.35rem; display:inline-block; margin:0 0.25rem} .table-status thead th{background:transparent;border-bottom:1px solid rgba(255,255,255,0.08); color: #fff} .table-status td, .table-status th{vertical-align:middle}`}</style>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark admin-gradient fixed-top">
           <div className="container">
