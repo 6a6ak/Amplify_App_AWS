@@ -68,90 +68,93 @@ export default function AboutPage() {
             generates sample plate numbers, and logs data for analysis.
           </p>
           <hr />
-          <h3>Table of Contents</h3>
-          <ul className="list-unstyled mb-4">
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#overview"
-              >
-                <i className="fa fa-info-circle me-2" aria-hidden="true" />
-                Overview
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#hardware"
-              >
-                <i className="fa fa-microchip me-2" aria-hidden="true" />
-                Hardware
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#aws-architecture"
-              >
-                <i className="fa fa-cloud me-2" aria-hidden="true" />
-                AWS Architecture
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#web-application"
-              >
-                <i className="fa fa-desktop me-2" aria-hidden="true" />
-                Web Application
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#security"
-              >
-                <i className="fa fa-lock me-2" aria-hidden="true" />
-                Security
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#monitoring-and-logging"
-              >
-                <i className="fa fa-chart-line me-2" aria-hidden="true" />
-                Monitoring &amp; Logging
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#data-flow"
-              >
-                <i className="fa fa-random me-2" aria-hidden="true" />
-                Data Flow
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start mb-2 ps-0"
-                href="#getting-started"
-              >
-                <i className="fa fa-play-circle me-2" aria-hidden="true" />
-                Getting Started
-              </a>
-            </li>
-            <li>
-              <a
-                className="btn btn-link text-white w-100 text-start ps-0"
-                href="#license"
-              >
-                <i className="fa fa-balance-scale me-2" aria-hidden="true" />
-                License
-              </a>
-            </li>
-          </ul>
+          <h3 id="table-of-contents">Table of Contents</h3>
+          <div className="row g-4 mb-4">
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body py-3">
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#overview"
+                  >
+                    <i className="fa fa-info-circle me-2" aria-hidden="true" />
+                    Overview
+                  </a>
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#hardware"
+                  >
+                    <i className="fa fa-microchip me-2" aria-hidden="true" />
+                    Hardware
+                  </a>
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#aws-architecture"
+                  >
+                    <i className="fa fa-cloud me-2" aria-hidden="true" />
+                    AWS Architecture
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body py-3">
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#web-application"
+                  >
+                    <i className="fa fa-desktop me-2" aria-hidden="true" />
+                    Web Application
+                  </a>
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#security"
+                  >
+                    <i className="fa fa-lock me-2" aria-hidden="true" />
+                    Security
+                  </a>
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#monitoring-and-logging"
+                  >
+                    <i className="fa fa-chart-line me-2" aria-hidden="true" />
+                    Monitoring &amp; Logging
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body py-3">
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#data-flow"
+                  >
+                    <i className="fa fa-random me-2" aria-hidden="true" />
+                    Data Flow
+                  </a>
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#getting-started"
+                  >
+                    <i className="fa fa-play-circle me-2" aria-hidden="true" />
+                    Getting Started
+                  </a>
+                  <a
+                    className="btn btn-link text-white w-100 text-start ps-0"
+                    href="#license"
+                  >
+                    <i
+                      className="fa fa-balance-scale me-2"
+                      aria-hidden="true"
+                    />
+                    License
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
           <hr />
           <h3 id="overview">Overview</h3>
           <p>
