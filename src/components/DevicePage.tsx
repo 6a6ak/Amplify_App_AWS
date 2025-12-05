@@ -223,7 +223,9 @@ export function DeviceList() {
             <div className="col-12">
               <div className="card mb-3">
                 <div className="card-header">
-                  Daily online devices (last 7 days)
+                  <span className="text-dark fw-bold">
+                    Daily online devices (last 7 days)
+                  </span>
                 </div>
                 <div
                   className="card-body"
@@ -250,7 +252,9 @@ export function DeviceList() {
             <div className="col-12">
               <div className="card mb-3">
                 <div className="card-header">
-                  Monthly online devices (last 12 months)
+                  <span className="text-dark fw-bold">
+                    Monthly online devices (last 12 months)
+                  </span>
                 </div>
                 <div
                   className="card-body"
@@ -277,7 +281,9 @@ export function DeviceList() {
             <div className="col-12">
               <div className="card mb-3">
                 <div className="card-header">
-                  Yearly online devices (last 3 years)
+                  <span className="text-dark fw-bold">
+                    Yearly online devices (last 3 years)
+                  </span>
                 </div>
                 <div
                   className="card-body"
@@ -305,17 +311,29 @@ export function DeviceList() {
               <div key={d.device_id} className="col-12 col-md-6 col-lg-4">
                 <div className="card h-100">
                   <div className="card-body">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div>
-                        <div className="small text-muted">Device ID</div>
-                        <div>{d.device_id}</div>
-                      </div>
-                      <Link
-                        to={`/devices/${encodeURIComponent(d.device_id)}`}
-                        className="btn btn-sm btn-primary"
-                      >
-                        View
-                      </Link>
+                    <div className="d-flex align-items-center gap-2 mb-2">
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: 16,
+                          height: 16,
+                          borderRadius: "50%",
+                          backgroundColor:
+                            d.status === "online" ||
+                            (d.lastSeen && Date.now() - d.lastSeen < 30000)
+                              ? "#28a745"
+                              : "#dc3545",
+                          border: "2px solid #fff",
+                          boxShadow: "0 0 6px rgba(0,0,0,0.18)",
+                        }}
+                        title={
+                          d.status === "online" ||
+                          (d.lastSeen && Date.now() - d.lastSeen < 30000)
+                            ? "Online"
+                            : "Offline"
+                        }
+                      />
+                      <span className="fw-bold">{d.device_id}</span>
                     </div>
                     <div className="small mt-2">
                       Last temp:{" "}

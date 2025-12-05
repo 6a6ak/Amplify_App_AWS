@@ -349,7 +349,7 @@ export default function AdminPage() {
           {/* Device Status Map (moved to top) */}
           <div id="devices" className="card admin-card-shadow mb-3">
             <div className="card-header d-flex justify-content-between align-items-center status-map-header">
-              <div>
+              <div className="text-dark">
                 <strong>Device Status Map</strong>
                 <div className="small ms-2 d-inline-block">
                   &nbsp;&nbsp;
@@ -383,9 +383,27 @@ export default function AdminPage() {
                 <table className="table table-sm mb-0 table-status">
                   <thead>
                     <tr>
+                      <th
+                        style={{
+                          width: "24px",
+                          paddingLeft: 0,
+                          paddingRight: 0,
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            width: 1,
+                            height: 1,
+                            overflow: "hidden",
+                            clip: "rect(1px, 1px, 1px, 1px)",
+                          }}
+                        >
+                          Status
+                        </span>
+                      </th>
                       <th>Device ID</th>
                       <th>Last Seen</th>
-                      <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -393,29 +411,41 @@ export default function AdminPage() {
                       <tr
                         key={it.device_id}
                         className={it.online ? "table-success" : "table-danger"}
+                        style={{ height: "14px" }}
                       >
+                        <td className="d-flex align-items-center justify-content-center">
+                          <span
+                            style={{
+                              display: "inline-block",
+                              width: 14,
+                              height: 14,
+                              borderRadius: "50%",
+                              background:
+                                it.online ||
+                                (it.lastSeen &&
+                                  Date.now() - it.lastSeen < ONLINE_WINDOW_MS)
+                                  ? "linear-gradient(135deg,#43ea6b 60%,#1b7c2c 100%)"
+                                  : "linear-gradient(135deg,#e74c3c 60%,#7c1b1b 100%)",
+                              border: "2px solid #fff",
+                              boxShadow: "0 0 6px rgba(0,0,0,0.18)",
+                            }}
+                            title={
+                              it.online ||
+                              (it.lastSeen &&
+                                Date.now() - it.lastSeen < ONLINE_WINDOW_MS)
+                                ? "Online"
+                                : "Offline"
+                            }
+                          />
+                        </td>
                         <td>{it.device_id}</td>
                         <td>
                           {it.lastSeen
                             ? new Date(it.lastSeen).toLocaleString()
-                            : "-"}
-                        </td>
-                        <td>
-                          {it.online ? (
-                            <span className="badge bg-success">Online</span>
-                          ) : (
-                            <span className="badge bg-danger">Offline</span>
-                          )}
+                            : "Never"}
                         </td>
                       </tr>
                     ))}
-                    {statusMap.length === 0 && (
-                      <tr>
-                        <td colSpan={3} className="text-muted small">
-                          No items
-                        </td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
               </div>
