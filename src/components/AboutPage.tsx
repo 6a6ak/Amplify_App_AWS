@@ -165,19 +165,35 @@ export default function AboutPage() {
           </p>
           <hr />
           <h3 id="hardware">Hardware</h3>
-          <ul>
-            <li>
-              <strong>Ultrasonic Sensors</strong>
-              <br />
-              Detect vehicle movement between two fixed points.
-            </li>
-            <li>
-              <strong>ESP32 / ESP8266</strong>
-              <br />
-              Calculates speed, generates plate IDs, and publishes MQTT
-              messages.
-            </li>
-          </ul>
+          <div className="row g-4">
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-bullseye me-2" aria-hidden="true" />
+                    Ultrasonic Sensors
+                  </h5>
+                  <p className="card-text mb-0">
+                    Detect vehicle movement between two fixed points.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-microchip me-2" aria-hidden="true" />
+                    ESP32 / ESP8266
+                  </h5>
+                  <p className="card-text mb-0">
+                    Calculates speed, generates plate IDs, and publishes MQTT
+                    messages.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <hr />
           <h3 id="aws-architecture">AWS Architecture</h3>
           <ul>
