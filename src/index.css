@@ -99,6 +99,20 @@ body.bg-light {
   color: #ffffff !important;
 }
 
+/* Reusable dark header for chart/cards to match AdminPage */
+.card-header-dark {
+  background: linear-gradient(90deg, #0b1220 0%, #18202a 100%);
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Optional convenience class to mark the first daily chart card */
+.daily-chart-card > .card-header {
+  background: linear-gradient(90deg, #0b1220 0%, #18202a 100%);
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 /* Hero carousel: keep a reasonable standard height */
 #heroCarousel .carousel-item img {
   height: 360px; /* standard hero height */
@@ -144,4 +158,43 @@ b,
 strong {
   color: #0b1220; /* dark navy/near-black */
   font-weight: 700; /* ensure bold weight without Sass variable */
+}
+
+/* Cylinder-style vertical bar for temperature / humidity */
+.cylinder-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+.cylinder {
+  width: 68px;
+  height: 140px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(0, 0, 0, 0.06)
+  );
+  border-radius: 34px 34px 8px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 6px;
+  box-sizing: border-box;
+}
+.cylinder-fill {
+  width: 100%;
+  background: linear-gradient(180deg, #0a9396, #005f73);
+  border-radius: 24px 24px 6px 6px;
+  transition: height 300ms ease;
+}
+.cylinder-label {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+.cylinder-value {
+  display: block;
+  text-align: center;
+  font-weight: 700;
 }
