@@ -196,114 +196,343 @@ export default function AboutPage() {
           </div>
           <hr />
           <h3 id="aws-architecture">AWS Architecture</h3>
-          <ul>
-            <li>
-              <strong>AWS IoT Core</strong> – Secure MQTT messaging channel
-              <br />
-              Topics used:
-              <ul>
-                <li>
-                  <code>telemetry</code>
-                </li>
-                <li>
-                  <code>status</code>
-                </li>
-                <li>
-                  <code>deadlink</code>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Lambda</strong> – Processes messages and triggers storage
-              actions
-            </li>
-            <li>
-              <strong>DynamoDB</strong> – Stores JSON-based speed and plate data
-            </li>
-            <li>
-              <strong>S3 Bucket</strong> – Stores raw data for archival and
-              analysis
-            </li>
-            <li>
-              <strong>API Gateway</strong> – Provides REST interface for
-              frontend access
-            </li>
-            <li>
-              <strong>Cognito</strong> – Authentication for admin dashboard
-              usage
-            </li>
-            <li>
-              <strong>IAM</strong> – Role-based access control for all resources
-            </li>
-            <li>
-              <strong>CloudWatch</strong> – Logs, metrics, alarms
-            </li>
-            <li>
-              <strong>CloudTrail & AWS Config</strong> – Compliance and
-              configuration tracking
-            </li>
-          </ul>
+          <div className="row g-4">
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-cloud me-2" aria-hidden="true" />
+                    AWS IoT Core
+                  </h5>
+                  <p className="card-text mb-1">
+                    Secure MQTT messaging channel
+                  </p>
+                  <div>
+                    <span className="fw-semibold">Topics used:</span>
+                    <ul className="mb-0">
+                      <li>
+                        <code>telemetry</code>
+                      </li>
+                      <li>
+                        <code>status</code>
+                      </li>
+                      <li>
+                        <code>deadlink</code>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-lambda me-2" aria-hidden="true" />
+                    Lambda
+                  </h5>
+                  <p className="card-text mb-0">
+                    Processes messages and triggers storage actions
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-database me-2" aria-hidden="true" />
+                    DynamoDB
+                  </h5>
+                  <p className="card-text mb-0">
+                    Stores JSON-based speed and plate data
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-archive me-2" aria-hidden="true" />
+                    S3 Bucket
+                  </h5>
+                  <p className="card-text mb-0">
+                    Stores raw data for archival and analysis
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-plug me-2" aria-hidden="true" />
+                    API Gateway
+                  </h5>
+                  <p className="card-text mb-0">
+                    Provides REST interface for frontend access
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-user-shield me-2" aria-hidden="true" />
+                    Cognito
+                  </h5>
+                  <p className="card-text mb-0">
+                    Authentication for admin dashboard usage
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-id-badge me-2" aria-hidden="true" />
+                    IAM
+                  </h5>
+                  <p className="card-text mb-0">
+                    Role-based access control for all resources
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-chart-bar me-2" aria-hidden="true" />
+                    CloudWatch
+                  </h5>
+                  <p className="card-text mb-0">Logs, metrics, alarms</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-12">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-shield-alt me-2" aria-hidden="true" />
+                    CloudTrail &amp; AWS Config
+                  </h5>
+                  <p className="card-text mb-0">
+                    Compliance and configuration tracking
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <hr />
           <h3 id="web-application">Web Application</h3>
-          <ul>
-            <li>
-              Developed using <strong>React</strong>
-            </li>
-            <li>Displays logs and system insights for administrators</li>
-            <li>
-              Managed and deployed with <strong>AWS Amplify</strong>
-            </li>
-            <li>
-              Automatic deployment triggered by updates on the{" "}
-              <code>release</code> branch
-            </li>
-          </ul>
+          <div className="row g-4">
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title d-flex align-items-center">
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg"
+                      alt="React Logo"
+                      style={{ width: 28, height: 28, marginRight: 8 }}
+                    />
+                    Built with React
+                  </h5>
+                  <p className="card-text mb-0">
+                    Modern, responsive frontend for administrators to view logs
+                    and system insights.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-rocket me-2" aria-hidden="true" />
+                    AWS Amplify Deployment
+                  </h5>
+                  <p className="card-text mb-0">
+                    Managed deployment and hosting. Automatic updates on{" "}
+                    <code>release</code> branch push.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <hr />
           <h3 id="security">Security</h3>
-          <ul>
-            <li>Encrypted MQTT connections using device certificates</li>
-            <li>Strict IAM role access to databases and storage</li>
-            <li>Authenticated access via Cognito for management tools</li>
-          </ul>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-lock me-2" aria-hidden="true" />
+                    Encrypted Connections
+                  </h5>
+                  <p className="card-text mb-0">
+                    MQTT secured with device certificates.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-user-shield me-2" aria-hidden="true" />
+                    IAM &amp; Cognito
+                  </h5>
+                  <p className="card-text mb-0">
+                    Strict IAM roles and Cognito authentication for admin tools.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-database me-2" aria-hidden="true" />
+                    Controlled Access
+                  </h5>
+                  <p className="card-text mb-0">
+                    Limited database and storage permissions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <hr />
           <h3 id="monitoring-and-logging">Monitoring and Logging</h3>
-          <ul>
-            <li>CloudWatch for logs and real-time metrics</li>
-            <li>CloudTrail for auditing changes and API activity</li>
-            <li>AWS Config for configuration compliance</li>
-          </ul>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-chart-line me-2" aria-hidden="true" />
+                    CloudWatch
+                  </h5>
+                  <p className="card-text mb-0">Logs and real-time metrics.</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-shield-alt me-2" aria-hidden="true" />
+                    CloudTrail
+                  </h5>
+                  <p className="card-text mb-0">
+                    Auditing changes and API activity.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-cogs me-2" aria-hidden="true" />
+                    AWS Config
+                  </h5>
+                  <p className="card-text mb-0">
+                    Configuration compliance tracking.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <hr />
           <h3 id="data-flow">Data Flow</h3>
-          <ol>
-            <li>Sensor detects a vehicle and calculates speed</li>
-            <li>Telemetry is sent over MQTT to AWS IoT Core</li>
-            <li>IoT Core triggers Lambda for processing</li>
-            <li>Data stored in DynamoDB and backed up in S3</li>
-            <li>Admin UI retrieves data via API Gateway</li>
-            <li>Cognito validates access permissions</li>
-          </ol>
+          <div className="row g-4 mb-4">
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-car-side me-2" aria-hidden="true" />
+                    Detection & Speed Calculation
+                  </h5>
+                  <p className="card-text mb-0">
+                    Sensor detects a vehicle and calculates speed.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-paper-plane me-2" aria-hidden="true" />
+                    MQTT Telemetry
+                  </h5>
+                  <p className="card-text mb-0">
+                    Telemetry is sent over MQTT to AWS IoT Core.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-lambda me-2" aria-hidden="true" />
+                    Lambda Processing
+                  </h5>
+                  <p className="card-text mb-0">
+                    IoT Core triggers Lambda for processing.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-database me-2" aria-hidden="true" />
+                    Data Storage
+                  </h5>
+                  <p className="card-text mb-0">
+                    Data stored in DynamoDB and backed up in S3.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-desktop me-2" aria-hidden="true" />
+                    Admin UI Access
+                  </h5>
+                  <p className="card-text mb-0">
+                    Admin UI retrieves data via API Gateway.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card bg-dark text-white h-100 shadow-sm mt-4">
+                <div className="card-body">
+                  <h5 className="card-title">
+                    <i className="fa fa-user-shield me-2" aria-hidden="true" />
+                    Access Validation
+                  </h5>
+                  <p className="card-text mb-0">
+                    Cognito validates access permissions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
           <hr />
-          <h3 id="getting-started">Getting Started</h3>
-          <ol>
-            <li>Clone the repository</li>
-            <li>Create AWS IoT Core resources and download certificates</li>
-            <li>
-              Set up DynamoDB, Lambda, S3, API Gateway, Cognito, and CloudWatch
-            </li>
-            <li>Flash ESP firmware code to ESP32/ESP8266 boards</li>
-            <li>Configure WiFi and MQTT certificates on the devices</li>
-            <li>Deploy the web interface with Amplify connected to GitHub</li>
-          </ol>
-          <hr />
-          <h3 id="license">License</h3>
-          <p>MIT License. See repository for details.</p>
         </div>
       </main>
-      <footer className="py-4 border-top mt-auto bg-dark">
-        <div className="container text-center small text-muted">
-          &copy; {new Date().getFullYear()} Speed Meter Project
-        </div>
-      </footer>
     </div>
   );
 }
