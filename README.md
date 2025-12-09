@@ -1,7 +1,5 @@
 
 
-![GitHub](https://img.shields.io/badge/GitHub-LED%20Bite%20Wise-23272f?style=for-the-badge&logo=github&logoColor=white)
-
 ## Table of Contents
 
 
