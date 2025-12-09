@@ -43,3 +43,6 @@ server.log
 esp8266/aws_iotcore_esp8266/Cert/*
 esp8266/connect_device_package.zip
 esp8266/aws_iotcore_esp8266/secrets.h
+aws_iotcore_esp/esp8266/aws_iotcore_esp8266/aws_iotcore_esp8266/Cert/*
+aws_iotcore_esp/esp8266/aws_iotcore_esp8266/aws_iotcore_esp8266/secrets.h
+.gitignore
