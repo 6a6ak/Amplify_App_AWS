@@ -1,9 +1,17 @@
+
 ## Table of Contents
 
-| [Overview](#overview) | [Hardware](#hardware) | [AWS Architecture](#aws-architecture) |
-|:---------------------:|:--------------------:|:----------------------------:|
-| [Web Application](#web-application) | [Security](#security) | [Monitoring & Logging](#monitoring--logging) |
-| [Data Flow](#data-flow) | [Getting Started](#getting-started) | [License](#license) |
+<ul style="list-style: none; padding-left: 0;">
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/search--v1.png" width="32" style="vertical-align:middle;"/> <a href="#overview" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Overview</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/color/32/chip.png" width="32" style="vertical-align:middle;"/> <a href="#hardware" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Hardware</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/cloud.png" width="32" style="vertical-align:middle;"/> <a href="#aws-architecture" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">AWS Architecture</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" width="32" style="vertical-align:middle;"/> <a href="#web-application" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Web Application</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/lock-2.png" width="32" style="vertical-align:middle;"/> <a href="#security" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Security</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/combo-chart.png" width="32" style="vertical-align:middle;"/> <a href="#monitoring--logging" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Monitoring & Logging</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/merge-git.png" width="32" style="vertical-align:middle;"/> <a href="#data-flow" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Data Flow</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/rocket--v1.png" width="32" style="vertical-align:middle;"/> <a href="#getting-started" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Getting Started</a></li>
+	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/law.png" width="32" style="vertical-align:middle;"/> <a href="#license" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">License</a></li>
+</ul>
 
 ---
 
