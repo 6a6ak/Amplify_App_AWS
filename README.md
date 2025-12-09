@@ -1,17 +1,39 @@
 
+
+![GitHub](https://img.shields.io/badge/GitHub-LED%20Bite%20Wise-23272f?style=for-the-badge&logo=github&logoColor=white)
+
 ## Table of Contents
 
-<ul style="list-style: none; padding-left: 0;">
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/search--v1.png" width="32" style="vertical-align:middle;"/> <a href="#overview" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Overview</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/color/32/chip.png" width="32" style="vertical-align:middle;"/> <a href="#hardware" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Hardware</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/cloud.png" width="32" style="vertical-align:middle;"/> <a href="#aws-architecture" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">AWS Architecture</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" width="32" style="vertical-align:middle;"/> <a href="#web-application" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Web Application</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/lock-2.png" width="32" style="vertical-align:middle;"/> <a href="#security" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Security</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/combo-chart.png" width="32" style="vertical-align:middle;"/> <a href="#monitoring--logging" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Monitoring & Logging</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/merge-git.png" width="32" style="vertical-align:middle;"/> <a href="#data-flow" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Data Flow</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/rocket--v1.png" width="32" style="vertical-align:middle;"/> <a href="#getting-started" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">Getting Started</a></li>
-	<li style="margin-bottom: 12px;"><img src="https://img.icons8.com/ios-filled/32/law.png" width="32" style="vertical-align:middle;"/> <a href="#license" style="font-size: 1.35em; color: #ff9800; font-weight: 600; vertical-align:middle; text-decoration: none;">License</a></li>
-</ul>
+
+<p align="left">
+  <a href="#overview">
+    <img src="https://img.shields.io/badge/Overview-23272f?style=for-the-badge&logo=info&logoColor=white&labelColor=23272f&color=23272f" alt="Overview"/>
+  </a><br>
+  <a href="#hardware">
+    <img src="https://img.shields.io/badge/Hardware-23272f?style=for-the-badge&logo=microchip&logoColor=white&labelColor=23272f&color=23272f" alt="Hardware"/>
+  </a><br>
+  <a href="#aws-architecture">
+    <img src="https://img.shields.io/badge/AWS%20Architecture-23272f?style=for-the-badge&logo=amazon-aws&logoColor=white&labelColor=23272f&color=23272f" alt="AWS Architecture"/>
+  </a><br>
+  <a href="#web-application">
+    <img src="https://img.shields.io/badge/Web%20Application-23272f?style=for-the-badge&logo=react&logoColor=white&labelColor=23272f&color=23272f" alt="Web Application"/>
+  </a><br>
+  <a href="#security">
+    <img src="https://img.shields.io/badge/Security-23272f?style=for-the-badge&logo=shield&logoColor=white&labelColor=23272f&color=23272f" alt="Security"/>
+  </a><br>
+  <a href="#monitoring--logging">
+    <img src="https://img.shields.io/badge/Monitoring--Logging-23272f?style=for-the-badge&logo=bar-chart&logoColor=white&labelColor=23272f&color=23272f" alt="Monitoring & Logging"/>
+  </a><br>
+  <a href="#data-flow">
+    <img src="https://img.shields.io/badge/Data%20Flow-23272f?style=for-the-badge&logo=git&logoColor=white&labelColor=23272f&color=23272f" alt="Data Flow"/>
+  </a><br>
+  <a href="#getting-started">
+    <img src="https://img.shields.io/badge/Getting%20Started-23272f?style=for-the-badge&logo=rocket&logoColor=white&labelColor=23272f&color=23272f" alt="Getting Started"/>
+  </a><br>
+  <a href="#license">
+    <img src="https://img.shields.io/badge/License-23272f?style=for-the-badge&logo=balance-scale&logoColor=white&labelColor=23272f&color=23272f" alt="License"/>
+  </a>
+</p>
 
 ---
 
