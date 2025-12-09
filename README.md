@@ -15,93 +15,6 @@
 
 ---
 
-## Overview
-
-A secure IoT system for monitoring car speeds on a street using ESP32/ESP8266 devices and AWS cloud services. The system detects vehicle movement using ultrasonic sensors, calculates speed, generates sample plate numbers, and logs data for analysis.
-
----
-
-## Hardware
-
-| <b>Ultrasonic Sensors</b><br><sub>Detect vehicle movement between two fixed points.</sub> | <b>ESP32 / ESP8266</b><br><sub>Calculates speed, generates plate IDs, and publishes MQTT messages.</sub> |
-|:------------------------------------------------------:|:---------------------------------------------:|
-
----
-
-## AWS Architecture
-
-| <b>AWS IoT Core</b><br><sub>Secure MQTT messaging channel</sub><br><sub>Topics: <code>telemetry</code>, <code>status</code>, <code>deadlink</code></sub> | <b>Lambda</b><br><sub>Processes messages and triggers storage actions</sub> |
-|:---------------------------------------------:|:---------------------------------------------:|
-
-| <b>DynamoDB</b><br><sub>Stores JSON-based speed and plate data</sub> | <b>S3 Bucket</b><br><sub>Stores raw data for archival and analysis</sub> |
-|:---------------------------------------------:|:---------------------------------------------:|
-
-| <b>API Gateway</b><br><sub>Provides REST interface for frontend access</sub> | <b>Cognito</b><br><sub>Authentication for admin dashboard usage</sub> |
-|:---------------------------------------------:|:---------------------------------------------:|
-
-| <b>IAM</b><br><sub>Role-based access control for all resources</sub> | <b>CloudWatch</b><br><sub>Logs, metrics, alarms</sub> |
-|:---------------------------------------------:|:---------------------------------------------:|
-
-| <b>CloudTrail & AWS Config</b><br><sub>Compliance and configuration tracking</sub> |
-|:---------------------------------------------:|
-
----
-
-## Web Application
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React Logo" width="24" height="24" />
-
-Built with React. Modern, responsive frontend for administrators to view logs and system insights.
-
-**AWS Amplify Deployment:** Managed deployment and hosting. Automatic updates on `release` branch push.
-
----
-
-## Security
-
-| <b>Encrypted Connections</b><br><sub>MQTT secured with device certificates.</sub> | <b>IAM & Cognito</b><br><sub>Strict IAM roles and Cognito authentication for admin tools.</sub> | <b>Controlled Access</b><br><sub>Limited database and storage permissions.</sub> |
-|:---------------------------:|:-------------------:|:----------------------:|
-
----
-
-## Monitoring & Logging
-
-| <b>CloudWatch</b><br><sub>Logs and real-time metrics.</sub> | <b>CloudTrail</b><br><sub>Auditing changes and API activity.</sub> | <b>AWS Config</b><br><sub>Configuration compliance tracking.</sub> |
-|:----------------:|:----------------:|:----------------:|
-
----
-
-## Data Flow
-
-| <b>Detection & Speed Calculation</b><br><sub>Sensor detects a vehicle and calculates speed.</sub> | <b>MQTT Telemetry</b><br><sub>Telemetry is sent over MQTT to AWS IoT Core.</sub> |
-|:-----------------------------------:|:--------------------:|
-
-| <b>Lambda Processing</b><br><sub>IoT Core triggers Lambda for processing.</sub> | <b>Data Storage</b><br><sub>Data stored in DynamoDB and backed up in S3.</sub> |
-|:----------------------:|:------------------:|
-
-| <b>Admin UI Access</b><br><sub>Admin UI retrieves data via API Gateway.</sub> | <b>Access Validation</b><br><sub>Cognito validates access permissions.</sub> |
-|:---------------------:|:-------------------:|
-
----
-
-## Getting Started
-
-1. Clone the repository
-2. Create AWS IoT Core resources and download certificates
-3. Set up DynamoDB, Lambda, S3, API Gateway, Cognito, and CloudWatch
-4. Flash firmware code to ESP32/ESP8266 boards
-5. Configure WiFi and MQTT certificates on the devices
-6. Deploy the web interface with Amplify and connect to GitHub
-
----
-
-## License
-MIT License. See LICENSE file for details.
-|-------------------------|------------------------|-----------------------------|
-| [💻 Web Application](#web-application) | [🔒 Security](#security) | [📊 Monitoring & Logging](#monitoring-and-logging) |
-| [🔀 Data Flow](#data-flow) | [🚀 Getting Started](#getting-started) | [⚖️ License](#license) |
-
-</div>
 
 ---
 
@@ -157,9 +70,12 @@ A secure IoT system for monitoring car speeds on a street using ESP32/ESP8266 de
 
 ## 💻 Web Application
 
-![React Logo](https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg)
+<span style="display: flex; align-items: center; gap: 10px;">
+	<img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" width="32" style="vertical-align:middle;" alt="React Logo"/>
+	<span style="font-size: 1.1em; font-weight: 600; color: #61dafb;">Built with React</span>
+</span>
 
-Built with React
+
 
 Modern, responsive frontend for administrators to view logs and system insights.
 
