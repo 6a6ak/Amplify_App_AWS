@@ -154,4 +154,4 @@ Modern, responsive frontend for administrators to view logs and system insights.
 ---
 
 ## ⚖️ License
-MIT License. See LICENSE file for details.
+MIT License. See [License](./LICENSE) file for details.
