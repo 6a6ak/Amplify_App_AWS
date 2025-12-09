@@ -3,34 +3,16 @@
 ## Table of Contents
 
 
-<p align="left">
-  <a href="#overview">
-    <img src="https://img.shields.io/badge/Overview-23272f?style=for-the-badge&logo=info&logoColor=white&labelColor=23272f&color=23272f" alt="Overview"/>
-  </a><br>
-  <a href="#hardware">
-    <img src="https://img.shields.io/badge/Hardware-23272f?style=for-the-badge&logo=microchip&logoColor=white&labelColor=23272f&color=23272f" alt="Hardware"/>
-  </a><br>
-  <a href="#aws-architecture">
-    <img src="https://img.shields.io/badge/AWS%20Architecture-23272f?style=for-the-badge&logo=amazon-aws&logoColor=white&labelColor=23272f&color=23272f" alt="AWS Architecture"/>
-  </a><br>
-  <a href="#web-application">
-    <img src="https://img.shields.io/badge/Web%20Application-23272f?style=for-the-badge&logo=react&logoColor=white&labelColor=23272f&color=23272f" alt="Web Application"/>
-  </a><br>
-  <a href="#security">
-    <img src="https://img.shields.io/badge/Security-23272f?style=for-the-badge&logo=shield&logoColor=white&labelColor=23272f&color=23272f" alt="Security"/>
-  </a><br>
-  <a href="#monitoring--logging">
-    <img src="https://img.shields.io/badge/Monitoring--Logging-23272f?style=for-the-badge&logo=bar-chart&logoColor=white&labelColor=23272f&color=23272f" alt="Monitoring & Logging"/>
-  </a><br>
-  <a href="#data-flow">
-    <img src="https://img.shields.io/badge/Data%20Flow-23272f?style=for-the-badge&logo=git&logoColor=white&labelColor=23272f&color=23272f" alt="Data Flow"/>
-  </a><br>
-  <a href="#getting-started">
-    <img src="https://img.shields.io/badge/Getting%20Started-23272f?style=for-the-badge&logo=rocket&logoColor=white&labelColor=23272f&color=23272f" alt="Getting Started"/>
-  </a><br>
-  <a href="#license">
-    <img src="https://img.shields.io/badge/License-23272f?style=for-the-badge&logo=balance-scale&logoColor=white&labelColor=23272f&color=23272f" alt="License"/>
-  </a>
+<p>
+  <a href="#overview">&#9899; <img src="https://img.shields.io/badge/Overview-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Overview"/></a><br>
+  <a href="#hardware">&#9899; <img src="https://img.shields.io/badge/Hardware-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Hardware"/></a><br>
+  <a href="#aws-architecture">&#9899; <img src="https://img.shields.io/badge/AWS%20Architecture-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="AWS Architecture"/></a><br>
+  <a href="#web-application">&#9899; <img src="https://img.shields.io/badge/Web%20Application-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Web Application"/></a><br>
+  <a href="#security">&#9899; <img src="https://img.shields.io/badge/Security-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Security"/></a><br>
+  <a href="#monitoring--logging">&#9899; <img src="https://img.shields.io/badge/Monitoring--Logging-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Monitoring & Logging"/></a><br>
+  <a href="#data-flow">&#9899; <img src="https://img.shields.io/badge/Data%20Flow-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Data Flow"/></a><br>
+  <a href="#getting-started">&#9899; <img src="https://img.shields.io/badge/Getting%20Started-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Getting Started"/></a><br>
+  <a href="#license">&#9899; <img src="https://img.shields.io/badge/License-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="License"/></a>
 </p>
 
 ---
