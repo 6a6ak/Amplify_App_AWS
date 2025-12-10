@@ -53,7 +53,7 @@ export default function AdminPage() {
               typeof last === "number"
                 ? Date.now() - last < ONLINE_WINDOW_MS
                 : false;
-            return { device_id: it.device_id, lastSeen: last, online };
+            return { device_id: it.device_id, lastSeen: last, online, name: it.lastItem?.name || it.name || null, from: it.lastItem?.from || it.from || null };
           });
           setStatusMap(normalized);
           // try to extract plate/speed info if available in items
@@ -112,7 +112,7 @@ export default function AdminPage() {
           typeof last === "number"
             ? Date.now() - last < ONLINE_WINDOW_MS
             : false;
-        return { device_id: d.device_id, lastSeen: last, online };
+        return { device_id: d.device_id, lastSeen: last, online, name: d.lastItem?.name || d.name || null, from: d.lastItem?.from || d.from || null };
       });
       setStatusMap(mapped);
       // compute top speeds by plate from device list
@@ -402,7 +402,9 @@ export default function AdminPage() {
                           Status
                         </span>
                       </th>
-                      <th>Device ID</th>
+                      <th>Device Name</th>
+                      <th>Device ID (MAC)</th>
+                      <th>From</th>
                       <th>Last Seen</th>
                     </tr>
                   </thead>
@@ -438,7 +440,9 @@ export default function AdminPage() {
                             }
                           />
                         </td>
+                        <td>{it.name ? it.name : '(Unnamed device)'}</td>
                         <td>{it.device_id}</td>
+                        <td>{it.from || '—'}</td>
                         <td>
                           {it.lastSeen
                             ? new Date(it.lastSeen).toLocaleString()

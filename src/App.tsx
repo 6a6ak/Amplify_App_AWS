@@ -37,6 +37,8 @@ const chartBgPlugin = {
   },
 };
 
+const ONLINE_THRESHOLD_MS = 60000; // 60s - consider device online if lastSeen within this window
+
 type Device = {
   device_id: string;
   lastSeen?: number;
@@ -63,12 +65,14 @@ function App() {
           });
           const json = await res.json();
           const list = Array.isArray(json.devices) ? json.devices : [];
-          setDevices(list);
+          const norm = list.map((x: any) => ({ ...x, name: x.lastItem?.name || x.name || null }));
+          setDevices(norm);
         } else {
           const res = await fetch("/api/devices");
           const json = await res.json();
           const list = Array.isArray(json.devices) ? json.devices : [];
-          setDevices(list);
+          const norm = list.map((x: any) => ({ ...x, name: x.lastItem?.name || x.name || null }));
+          setDevices(norm);
         }
       } catch (e: any) {
         setError(e?.message || "Failed to load devices");
@@ -412,11 +416,19 @@ function App() {
                     <div className="card h-100 border-info">
                       <div className="card-body py-3">
                         <div className="d-flex justify-content-between align-items-center mb-1">
-                          <span className="text-uppercase text-info small">
-                            Device ID:
-                          </span>{" "}
-                          {d.device_id}
-                          {d.lastItem?.name ? ` — ${d.lastItem.name}` : ""}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{
+                              display: 'inline-block',
+                              width: 12,
+                              height: 12,
+                              borderRadius: '50%',
+                              background: (d.lastSeen && (Date.now() - d.lastSeen) <= ONLINE_THRESHOLD_MS) ? '#28a745' : '#dc3545',
+                              border: '2px solid #fff',
+                              boxShadow: '0 0 6px rgba(0,0,0,0.18)'
+                            }} title={(d.lastSeen && (Date.now() - d.lastSeen) <= ONLINE_THRESHOLD_MS) ? 'Online' : 'Offline'} />
+                            <span className="text-uppercase text-info small">Device:</span>{' '}
+                            <span className="fw-semibold">{d.lastItem?.name || d.name || '(Unnamed device)'}</span>
+                          </div>
                         </div>
                         <div className="small text-muted mt-2">
                           <span className="fw-light">Last seen:</span>{" "}

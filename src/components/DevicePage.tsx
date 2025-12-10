@@ -45,7 +45,9 @@ function useDevices() {
         });
         const json = await res.json();
         const list = Array.isArray(json.devices) ? json.devices : [];
-        setDevices(list);
+        // Normalize device objects to include name from telemetry or DB
+        const norm = list.map((x: any) => ({ ...x, name: x.lastItem?.name || x.name || null }));
+        setDevices(norm);
       } catch (e: any) {
         setError(e?.message || "Failed to load devices");
       } finally {
@@ -333,7 +335,7 @@ export function DeviceList() {
                             : "Offline"
                         }
                       />
-                      <span className="fw-bold">{d.device_id}</span>
+                      <span className="fw-bold">{d.name ? d.name : '(Unnamed device)'}</span>
                     </div>
                     <div className="small mt-2">
                       Last temp:{" "}
