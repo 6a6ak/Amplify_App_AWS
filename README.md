@@ -99,7 +99,7 @@ Modern, responsive frontend for administrators to view logs and system insights.
 
 **1. IoT Core – Connected Device Status**
 
-![Projects Homepage](./readme/frontend01.PNG)
+![Projects Homepage](./readme/home.png)
 
 ![Admin Page](./readme/admin.png)
 
