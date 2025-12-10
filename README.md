@@ -41,7 +41,7 @@ A secure IoT system for monitoring car speeds on a street using ESP32/ESP8266 de
 
 ## 🔀 Data Flow
 
-Below is a high-level flowchart and explanation of how data moves through the system. Place a flowchart image at `./readme/flowchart.png` to visualize the architecture.
+Below is a high-level flowchart and explanation of how data moves through the system. 
 <br><br><br>
 <figure style="text-align:center; margin: 0 0 1rem 0;">
   <img src="./readme/chart01.png" alt="System flowchart" style="max-width:100%; display:block; margin:0 auto;" />
