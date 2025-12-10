@@ -101,7 +101,7 @@ Modern, responsive frontend for administrators to view logs and system insights.
 
 ![Projects Homepage](./readme/frontend01.PNG)
 
-![Projects Homepage](./readme/frontend01.PNG)
+![Projects Homepage](./readme/admin.png)
 
 ![Projects Homepage](./readme/frontend01.PNG)
 
