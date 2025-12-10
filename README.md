@@ -49,6 +49,50 @@ Below is a high-level flowchart and explanation of how data moves through the sy
 </figure>
 
 <br><br><br>
+
+
+### 1️⃣ Detection & Speed Calculation
+- Ultrasonic Sensor A detects object first
+- Ultrasonic Sensor B detects object second
+- Time difference is measured
+- Speed is calculated using:
+
+  **Speed = Distance / Time**
+
+- Temperature, humidity, and license plate values are generated randomly
+
+---
+
+### 2️⃣ MQTT Telemetry
+- Device publishes data to AWS IoT Core over MQTT
+- Topics used:
+  - `telemetry`
+  - `status`
+  - `deadlink`
+
+---
+
+### 3️⃣ lambda Processing
+- IoT Core routing rules trigger Lambda
+- Lambda processes telemetry payload
+- Data is stored in **DynamoDB**
+- Raw data is also archived in **S3 Bucket**
+
+---
+
+### 4️⃣ Web Access via API Gateway
+- API Gateway provides REST APIs for the UI
+
+API Types:
+- **Public API** → Public page can fetch limited telemetry (no Cognito required)
+- **Admin API** → Secure routes protected with Cognito JWT authentication
+
+---
+
+### 5️⃣ Authentication Validation
+- Cognito validates admin access permissions
+- All API traffic uses secure HTTPS
+
 ---
 
 ## 🔧 Hardware
