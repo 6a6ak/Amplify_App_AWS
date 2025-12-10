@@ -8,7 +8,7 @@ export default function SimpleStatus({ deviceId, apiBase = '' }) {
     const shadowUrl = base ? (base + `/api/devices/${deviceId}/shadow`) : `/api/devices/${deviceId}/shadow`;
     const telemetryUrl = base ? (base + `/api/devices/${deviceId}`) : `/api/devices/${deviceId}`;
 
-    let got = { online: false, lastSeen: 0, temp: null };
+    let got = { online: false, lastSeen: 0, temp: null, name: null };
 
     fetch(shadowUrl)
       .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
@@ -18,7 +18,7 @@ export default function SimpleStatus({ deviceId, apiBase = '' }) {
       })
       .catch(() => {/* ignore shadow errors, proceed to telemetry */})
       .finally(() => {
-        // fetch latest telemetry to show temperature
+        // fetch latest telemetry to show temperature and name
         fetch(telemetryUrl)
           .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
           .then(j => {
@@ -27,10 +27,11 @@ export default function SimpleStatus({ deviceId, apiBase = '' }) {
               const latest = items[0];
               got.temp = (typeof latest.temperature !== 'undefined') ? latest.temperature : null;
               got.lastSeen = got.lastSeen || latest.timestamp || 0;
+              got.name = latest.name || j.name || null;
             }
-            setStatus({ online: !!got.online, lastSeen: got.lastSeen || 0, temp: got.temp, loading: false, error: '' });
+            setStatus({ online: !!got.online, lastSeen: got.lastSeen || 0, temp: got.temp, loading: false, error: '', name: got.name });
           })
-          .catch(err => setStatus({ online: !!got.online, lastSeen: got.lastSeen || 0, temp: null, loading: false, error: String(err.message || err) }));
+          .catch(err => setStatus({ online: !!got.online, lastSeen: got.lastSeen || 0, temp: null, loading: false, error: String(err.message || err), name: null }));
       });
   }, [deviceId, apiBase]);
 
@@ -40,8 +41,8 @@ export default function SimpleStatus({ deviceId, apiBase = '' }) {
       <h2 style={{ margin: 0, marginBottom: 12 }}>Device Status</h2>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 14, color: '#666' }}>Device ID</div>
-          <div style={{ fontWeight: 600 }}>{deviceId}</div>
+          <div style={{ fontSize: 14, color: '#666' }}>Device</div>
+          <div style={{ fontWeight: 600 }}>{status.name || '(Unnamed device)'}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: 6, background: status.online ? '#2ecc71' : '#e74c3c', marginRight: 8 }} />

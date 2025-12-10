@@ -15,7 +15,15 @@ export default function DeviceStatus({ apiBase = '' }) {
     const devicesUrl = base ? (base + '/api/devices') : '/api/devices';
     fetch(devicesUrl)
       .then((r) => r.ok ? r.json() : Promise.reject('fetch-failed'))
-      .then((j) => mounted && setDevices(j.devices || []))
+      .then((j) => {
+        const list = j.devices || [];
+        // Normalize device objects to include a preferred name from telemetry or DB
+        const norm = list.map((x) => ({
+          ...x,
+          name: x.lastItem?.name || x.name || null,
+        }));
+        mounted && setDevices(norm);
+      })
       .catch(() => mounted && setDevices([]));
 
     // connect SSE
@@ -27,9 +35,12 @@ export default function DeviceStatus({ apiBase = '' }) {
         const d = JSON.parse(e.data);
         setDevices((prev) => {
           const map = new Map(prev.map(x => [x.device_id, x]));
-          const cur = map.get(d.device_id) || { device_id: d.device_id, lastSeen: d.lastSeen, lastItem: null };
-          cur.lastSeen = d.lastSeen;
-          cur.online = d.online;
+          const cur = map.get(d.device_id) || { device_id: d.device_id, lastSeen: d.lastSeen, lastItem: null, name: null };
+            cur.lastSeen = d.lastSeen;
+            cur.online = d.online;
+            // preserve or update name if provided in SSE payload
+            if (d.name) cur.name = d.name;
+            if (d.lastItem?.name) cur.name = d.lastItem.name;
           // preserve source (mqtt or poll)
           cur.source = d.source || cur.source || 'mqtt';
           map.set(d.device_id, cur);
@@ -70,13 +81,32 @@ export default function DeviceStatus({ apiBase = '' }) {
           <li key={d.device_id} style={{ padding: 8, borderBottom: '1px solid #f2f2f2' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <strong>{d.device_id}</strong>
+                <strong>{d.lastItem?.name || d.name || '(Unnamed device)'}</strong>
                 <div style={{ fontSize: 12, color: '#666' }}>
                   lastSeen: {d.lastSeen ? new Date(d.lastSeen).toLocaleString() : '—'}
-                  {d.lastItem && typeof d.lastItem.temperature !== 'undefined' && (
-                    <span style={{ marginLeft: 12 }}>
-                      • Temp: <strong>{d.lastItem.temperature}{typeof d.lastItem.temperature === 'number' ? '°C' : ''}</strong>
-                    </span>
+                  {d.lastItem && (
+                    <>
+                      {typeof d.lastItem.plate !== 'undefined' && (
+                        <span style={{ marginLeft: 12 }}>
+                          • Plate: <strong>{d.lastItem.plate}</strong>
+                        </span>
+                      )}
+                      {typeof d.lastItem.speed !== 'undefined' && (
+                        <span style={{ marginLeft: 12 }}>
+                          • Speed: <strong>{d.lastItem.speed}</strong>
+                        </span>
+                      )}
+                      {typeof d.lastItem.temperature !== 'undefined' && (
+                        <span style={{ marginLeft: 12 }}>
+                          • Temp: <strong>{d.lastItem.temperature}{typeof d.lastItem.temperature === 'number' ? '°C' : ''}</strong>
+                        </span>
+                      )}
+                      {typeof d.lastItem.humidity !== 'undefined' && (
+                        <span style={{ marginLeft: 12 }}>
+                          • Humidity: <strong>{d.lastItem.humidity}{typeof d.lastItem.humidity === 'number' ? '%' : ''}</strong>
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
