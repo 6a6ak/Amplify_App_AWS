@@ -112,8 +112,6 @@ Modern, responsive frontend for administrators to view logs and system insights.
 > Managed deployment and hosting. Automatic updates on `release` branch push.
 
 
-## 📸 Screenshots
-
 
 
 **IoT Core – Connected Device Status**
@@ -149,7 +147,7 @@ Modern, responsive frontend for administrators to view logs and system insights.
 
 ### Credential Protection
 
-To avoid exposing secrets inside firmware or code:
+>To avoid exposing secrets inside firmware or code:
 
 - MQTT certificates and private keys are stored in a separate `secrets.h` file
 - Sensitive credentials are NOT hard-coded inside main program files
@@ -157,6 +155,12 @@ To avoid exposing secrets inside firmware or code:
 - This prevents accidental leakage if the project source code is shared publicly (ex: GitHub)
 
 This ensures secure handling of device identity materials.
+
+### API Gateway Security
+
+>Admin endpoints require Cognito authentication and enforce JWT validation  
+ Public endpoints are **READ-ONLY** and provide **limited telemetry**  
+ All API traffic is encrypted using HTTPS  
 
 
 **Encrypted Connections**
@@ -202,7 +206,7 @@ The solution is built using fully managed AWS services that automatically scale 
 ---
 ## 🧪 Data & Simulation Notes
 
-To clarify which parts of the system are real measurements and which are simulated:
+
 
 - **Speed (Real Measurement)**
   - Speed is calculated from the time difference between Ultrasonic Sensor A and Ultrasonic Sensor B
@@ -237,26 +241,49 @@ This version demonstrates a real physical speed calculation while simulating add
 > Configuration compliance tracking.
 
 ---
-
 ## 🔀 Data Flow
 
-**Detection & Speed Calculation**
-> Sensor detects a vehicle and calculates speed.
+### 1️⃣ Detection & Speed Calculation
+- Ultrasonic Sensor A detects object first
+- Ultrasonic Sensor B detects object second
+- Time difference is measured
+- Speed is calculated using:
 
-**MQTT Telemetry**
-> Telemetry is sent over MQTT to AWS IoT Core.
+  **Speed = Distance / Time**
 
-**Lambda Processing**
-> IoT Core triggers Lambda for processing.
+- Temperature, humidity, and license plate values are generated randomly
 
-**Data Storage**
-> Data stored in DynamoDB and backed up in S3.
+---
 
-**Admin UI Access**
-> Admin UI retrieves data via API Gateway.
+### 2️⃣ MQTT Telemetry
+- Device publishes data to AWS IoT Core over MQTT
+- Topics used:
+  - `telemetry`
+  - `status`
+  - `deadlink`
 
-**Access Validation**
-> Cognito validates access permissions.
+---
+
+### 3️⃣ lambda Processing
+- IoT Core routing rules trigger Lambda
+- Lambda processes telemetry payload
+- Data is stored in **DynamoDB**
+- Raw data is also archived in **S3 Bucket**
+
+---
+
+### 4️⃣ Web Access via API Gateway
+- API Gateway provides REST APIs for the UI
+
+API Types:
+- **Public API** → Public page can fetch limited telemetry (no Cognito required)
+- **Admin API** → Secure routes protected with Cognito JWT authentication
+
+---
+
+### 5️⃣ Authentication Validation
+- Cognito validates admin access permissions
+- All API traffic uses secure HTTPS
 
 ---
 
