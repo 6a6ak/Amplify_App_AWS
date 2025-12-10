@@ -77,7 +77,26 @@ A secure IoT system for monitoring car speeds on a street using ESP32/ESP8266 de
 > Compliance and configuration tracking
 
 ---
+### 🔊 MQTT Topics
 
+The system uses three dedicated MQTT topics to separate message types clearly:
+
+| Topic Name | Purpose | Publisher | Consumer |
+|-----------|---------|-----------|----------|
+| `telemetry` | Speed + simulated temperature, humidity, and plate data | ESP32 / ESP8266 | AWS IoT Core → Lambda → DynamoDB |
+| `status` | Online/offline status, heartbeat checking | ESP32 / ESP8266 | AWS IoT Core → Device Shadow |
+| `deadlink` | Reports lost connection to detect offline devices | ESP32 / ESP8266 | AWS IoT Core / Monitoring tools |
+
+**Routing Rules**
+- IoT Core Rule Engine forwards **telemetry** messages to Lambda for processing
+- **status** messages update the Device Shadow state
+- **deadlink** messages allow monitoring and alerting if connection drops
+
+This structured approach makes the system easier to scale, debug and monitor.
+![Screenshot - MQTT Telemetry View](./readme/topic-status.PNG)
+
+![Screenshot - MQTT Telemetry View](./readme/telemetry.PNG)
+---
 ## 💻 Web Application
 
 <span style="display: flex; align-items: center; gap: 10px;">
@@ -186,13 +205,11 @@ The solution is built using fully managed AWS services that automatically scale 
 To clarify which parts of the system are real measurements and which are simulated:
 
 - **Speed (Real Measurement)**
-  - Speed is calculated from the time difference between ultrasonic sensor detections
-  - Uses the known fixed distance between Sensor A and Sensor B
+  - Speed is calculated from the time difference between Ultrasonic Sensor A and Ultrasonic Sensor B
+  - The distance between the sensors is a fixed known value
   - Formula used:
   
-    \[
-    Speed = \frac{Distance}{Time}
-    \]
+    **Speed = Distance / Time**
 
 - **Temperature**
   - Randomly generated simulation value
@@ -201,9 +218,10 @@ To clarify which parts of the system are real measurements and which are simulat
   - Randomly generated simulation value
 
 - **License Plate**
-  - Random randomly generated and does not verify if the detected object is a real car
+  - Random generated and does not verify if the detected object is a real car
 
 This version demonstrates a real physical speed calculation while simulating additional telemetry values for a complete IoT data pipeline.
+
 
 ---
 
