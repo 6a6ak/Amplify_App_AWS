@@ -95,17 +95,33 @@ Modern, responsive frontend for administrators to view logs and system insights.
 
 ## 📸 Screenshots
 
-> *(Screenshots will be added here later by the developer)*
 
-**1. IoT Core – Connected Device Status**
 
-![Projects Homepage](./readme/home.png)
+**IoT Core – Connected Device Status**
 
-![Admin Page](./readme/admin.png)
 
-![Devices](./readme/device.png)
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+	<img src="./readme/home.png" alt="Projects Homepage" style="max-width:100%; display:block; margin:0 auto;" />
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong> Projects Homepage</strong></figcaption>
+</figure>
 
-![Devices](./readme/about.png)
+
+
+
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+	<img src="./readme/admin.png" alt="Admin Page" style="max-width:100%; display:block; margin:0 auto;" />
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>Admin Page (dashboard view)</strong></figcaption>
+</figure>
+
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+	<img src="./readme/device.png" alt="Devices" style="max-width:100%; display:block; margin:0 auto;" />
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong> Devices list and cards</strong></figcaption>
+</figure>
+
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+	<img src="./readme/about.png" alt="About Page" style="display:block; margin:0 auto;" />
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong> About page / project info</strong></figcaption>
+</figure>
 
 
 ---
