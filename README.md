@@ -185,7 +185,7 @@ This enables fast monitoring while keeping the admin updated on connection chang
 ---
 
 <figure style="text-align:center; margin: 0 0 1rem 0;">
-  <img src="./readme/discord_server.png" alt="Discord Server" style="max-width:100%; display:block; margin:0 auto;" />
+  <img src="./readme/discord_status_server.png" alt="Discord Server" style="max-width:100%; display:block; margin:0 auto;" />
   <figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>Discord server — status channel</strong></figcaption>
 </figure>
 
