@@ -92,6 +92,19 @@ Modern, responsive frontend for administrators to view logs and system insights.
 **AWS Amplify Deployment**
 > Managed deployment and hosting. Automatic updates on `release` branch push.
 
+
+## 📸 Screenshots
+
+> *(Screenshots will be added here later by the developer)*
+
+**1. IoT Core – Connected Device Status**
+
+![Projects Homepage](./readme/frontend01.PNG)
+
+![Projects Homepage](./readme/frontend01.PNG)
+
+![Projects Homepage](./readme/frontend01.PNG)
+
 ---
 
 ## 🔒 Security
