@@ -128,6 +128,18 @@ Modern, responsive frontend for administrators to view logs and system insights.
 
 ## 🔒 Security
 
+### Credential Protection
+
+To avoid exposing secrets inside firmware or code:
+
+- MQTT certificates and private keys are stored in a separate `secrets.h` file
+- Sensitive credentials are NOT hard-coded inside main program files
+- Only compiled devices contain these credentials
+- This prevents accidental leakage if the project source code is shared publicly (ex: GitHub)
+
+This ensures secure handling of device identity materials.
+
+
 **Encrypted Connections**
 > MQTT secured with device certificates.
 
@@ -136,6 +148,62 @@ Modern, responsive frontend for administrators to view logs and system insights.
 
 **Controlled Access**
 > Limited database and storage permissions.
+
+---
+
+
+## 📈 Scalability
+
+The solution is built using fully managed AWS services that automatically scale when more devices are connected.
+
+- **AWS IoT Core**  
+  - Handles secure MQTT messaging for a large number of devices
+  - Scaling is fully automatic
+
+- **AWS Lambda**  
+  - Event-driven compute scales based on incoming IoT messages
+  - No servers to manage
+
+- **DynamoDB**  
+  - Automatically adjusts throughput capacity
+  - Stores increasing telemetry data without performance loss
+
+- **S3 Storage**  
+  - Designed for virtually unlimited storage
+  - Ideal for long-term history and datasets
+
+- **AWS Amplify (Web Hosting + CI/CD)**  
+  - Automatic deployment pipeline for fast updates
+  - Scales frontend delivery to many users
+
+> This architecture allows the project to move from a small simulation to a large production deployment without redesigning the system.
+
+
+
+---
+## 🧪 Data & Simulation Notes
+
+To clarify which parts of the system are real measurements and which are simulated:
+
+- **Speed (Real Measurement)**
+  - Speed is calculated from the time difference between ultrasonic sensor detections
+  - Uses the known fixed distance between Sensor A and Sensor B
+  - Formula used:
+  
+    \[
+    Speed = \frac{Distance}{Time}
+    \]
+
+- **Temperature**
+  - Randomly generated simulation value
+
+- **Humidity**
+  - Randomly generated simulation value
+
+- **License Plate**
+  - Random randomly generated and does not verify if the detected object is a real car
+
+This version demonstrates a real physical speed calculation while simulating additional telemetry values for a complete IoT data pipeline.
 
 ---
 
