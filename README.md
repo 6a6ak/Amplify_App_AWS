@@ -167,7 +167,8 @@ This structured approach makes the system easier to scale, debug and monitor.
   <img src="./readme/telemetry.PNG" alt="Screenshot - MQTT Telemetry View (telemetry)" style="max-width:100%; display:block; margin:0 auto;" />
   <figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>Telemetry View</strong></figcaption>
 </figure>
----
+
+
 ## 💻 Web Application
 
 <span style="display: flex; align-items: center; gap: 10px;">
