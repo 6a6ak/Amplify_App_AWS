@@ -262,16 +262,5 @@ API Types:
 
 ---
 
-## 🚀 Getting Started
-
-1. Clone the repository
-2. Create AWS IoT Core resources and download certificates
-3. Set up DynamoDB, Lambda, S3, API Gateway, Cognito, and CloudWatch
-4. Flash firmware code to ESP32/ESP8266 boards
-5. Configure WiFi and MQTT certificates on the devices
-6. Deploy the web interface with Amplify and connect to GitHub
-
----
-
 ## ⚖️ License
 MIT License. See [License](./LICENSE) file for details.
