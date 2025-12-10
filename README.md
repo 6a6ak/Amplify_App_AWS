@@ -93,9 +93,16 @@ The system uses three dedicated MQTT topics to separate message types clearly:
 - **deadlink** messages allow monitoring and alerting if connection drops
 
 This structured approach makes the system easier to scale, debug and monitor.
-![Screenshot - MQTT Telemetry View](./readme/topic-status.PNG)
 
-![Screenshot - MQTT Telemetry View](./readme/telemetry.PNG)
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+  <img src="./readme/topic-status.PNG" alt="Screenshot - MQTT Telemetry View (topics)" style="max-width:100%; display:block; margin:0 auto;" />
+  <figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>MQTT Topics / Telemetry Overview</strong></figcaption>
+</figure>
+
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+  <img src="./readme/telemetry.PNG" alt="Screenshot - MQTT Telemetry View (telemetry)" style="max-width:100%; display:block; margin:0 auto;" />
+  <figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>Telemetry View</strong></figcaption>
+</figure>
 ---
 ## 💻 Web Application
 
