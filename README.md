@@ -140,8 +140,29 @@ Modern, responsive frontend for administrators to view logs and system insights.
 	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong> About page / project info</strong></figcaption>
 </figure>
 
+## 🔔 Discord Status Notifications
+
+Device ONLINE / OFFLINE updates are also sent to a Discord channel
+so administrators can easily monitor device health in real time.
+
+Each notification includes:
+- Device ID
+- Status (connected / disconnected)
+- Timestamp
+
+A dedicated Discord channel is used to receive these alerts
+(e.g., `#esp_status` as shown below).
+
+This enables fast monitoring while keeping the admin updated on connection changes.
 
 ---
+
+
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+  <img src="./readme/discord_server.png" alt="Discord Server" style="max-width:100%; display:block; margin:0 auto;" />
+  <figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>Discord server — status channel</strong></figcaption>
+</figure>
+
 
 ## 🔒 Security
 
