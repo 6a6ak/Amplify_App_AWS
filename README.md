@@ -9,15 +9,22 @@
 
 [<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Hardware-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Hardware"/>](#hardware)
 
+
+[<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Data%20Flow-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Data Flow"/>](#data-flow)
+
+[<img src="https://img.shields.io/badge/%F0%9F%94%8A%20MQTT%20Topics-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="MQTT Topics"/>](#mqtt-topics)
+
 [<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20AWS%20Architecture-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="AWS Architecture"/>](#aws-architecture)
 
 [<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Web%20Application-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Web Application"/>](#web-application)
 
-[<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Security-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Security"/>](#security)
+[<img src="https://img.shields.io/badge/%F0%9F%93%A7%20Scalability-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Scalability"/>](#scalability)
 
 [<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Monitoring--Logging-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Monitoring & Logging"/>](#monitoring--logging)
 
-[<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Data%20Flow-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Data Flow"/>](#data-flow)
+[<img src="https://img.shields.io/badge/%E2%9A%A1%EF%B8%8F%20Discord%20Notifications-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Discord Notifications"/>](#discord-status-notifications)
+
+[<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Security-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Security"/>](#security)
 
 [<img src="https://img.shields.io/badge/%F0%9F%9F%A0%20Getting%20Started-23272f?style=for-the-badge&labelColor=23272f&color=23272f" alt="Getting Started"/>](#getting-started)
 
@@ -32,6 +39,16 @@
 
 A secure IoT system for monitoring car speeds on a street using ESP32/ESP8266 devices and AWS cloud services. The system detects vehicle movement using ultrasonic sensors, calculates speed, generates sample plate numbers, and logs data for analysis.
 
+## 🔀 Data Flow
+
+Below is a high-level flowchart and explanation of how data moves through the system. Place a flowchart image at `./readme/flowchart.png` to visualize the architecture.
+<br><br><br>
+<figure style="text-align:center; margin: 0 0 1rem 0;">
+  <img src="./readme/chart01.png" alt="System flowchart" style="max-width:100%; display:block; margin:0 auto;" />
+  <figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>System flowchart — end-to-end data movement</strong></figcaption>
+</figure>
+
+<br><br><br>
 ---
 
 ## 🔧 Hardware
@@ -40,6 +57,9 @@ A secure IoT system for monitoring car speeds on a street using ESP32/ESP8266 de
 > Detect vehicle movement between two fixed points.
 
 **ESP32 / ESP8266**
+
+---
+
 > Calculates speed, generates plate IDs, and publishes MQTT messages.
 
 ---
@@ -244,50 +264,6 @@ The solution is built using fully managed AWS services that automatically scale 
 > Configuration compliance tracking.
 
 ---
-## 🔀 Data Flow
-
-### 1️⃣ Detection & Speed Calculation
-- Ultrasonic Sensor A detects object first
-- Ultrasonic Sensor B detects object second
-- Time difference is measured
-- Speed is calculated using:
-
-  **Speed = Distance / Time**
-
-- Temperature, humidity, and license plate values are generated randomly
-
----
-
-### 2️⃣ MQTT Telemetry
-- Device publishes data to AWS IoT Core over MQTT
-- Topics used:
-  - `telemetry`
-  - `status`
-  - `deadlink`
-
----
-
-### 3️⃣ lambda Processing
-- IoT Core routing rules trigger Lambda
-- Lambda processes telemetry payload
-- Data is stored in **DynamoDB**
-- Raw data is also archived in **S3 Bucket**
-
----
-
-### 4️⃣ Web Access via API Gateway
-- API Gateway provides REST APIs for the UI
-
-API Types:
-- **Public API** → Public page can fetch limited telemetry (no Cognito required)
-- **Admin API** → Secure routes protected with Cognito JWT authentication
-
----
-
-### 5️⃣ Authentication Validation
-- Cognito validates admin access permissions
-- All API traffic uses secure HTTPS
-
 ---
 
 ## ⚖️ License
