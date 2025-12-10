@@ -188,28 +188,31 @@ Modern, responsive frontend for administrators to view logs and system insights.
 
 **IoT Core – Connected Device Status**
 
-
+<strong> Projects Homepage</strong>
 <figure style="text-align:center; margin: 0 0 1rem 0;">
 	<img src="./readme/home.png" alt="Projects Homepage" style="max-width:100%; display:block; margin:0 auto;" />
-	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong> Projects Homepage</strong></figcaption>
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"></figcaption>
 </figure>
 
 
 
-
+<strong>Admin Page (dashboard view)</strong>
 <figure style="text-align:center; margin: 0 0 1rem 0;">
 	<img src="./readme/admin.png" alt="Admin Page" style="max-width:100%; display:block; margin:0 auto;" />
-	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong>Admin Page (dashboard view)</strong></figcaption>
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"></figcaption>
 </figure>
 
+
+<strong> Devices list and cards</strong>
 <figure style="text-align:center; margin: 0 0 1rem 0;">
 	<img src="./readme/device.png" alt="Devices" style="max-width:100%; display:block; margin:0 auto;" />
-	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong> Devices list and cards</strong></figcaption>
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"></figcaption>
 </figure>
 
+<strong> About page / project info</strong>
 <figure style="text-align:center; margin: 0 0 1rem 0;">
 	<img src="./readme/about.png" alt="About Page" style="display:block; margin:0 auto;" />
-	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"><strong> About page / project info</strong></figcaption>
+	<figcaption style="color:#6c757d; margin-top:8px; font-size:0.95em;"></figcaption>
 </figure>
 
 ## 🔔 Discord Status Notifications
