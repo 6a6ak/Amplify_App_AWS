@@ -202,31 +202,6 @@ The solution is built using fully managed AWS services that automatically scale 
 > This architecture allows the project to move from a small simulation to a large production deployment without redesigning the system.
 
 
-
----
-## 🧪 Data & Simulation Notes
-
-
-
-- **Speed (Real Measurement)**
-  - Speed is calculated from the time difference between Ultrasonic Sensor A and Ultrasonic Sensor B
-  - The distance between the sensors is a fixed known value
-  - Formula used:
-  
-    **Speed = Distance / Time**
-
-- **Temperature**
-  - Randomly generated simulation value
-
-- **Humidity**
-  - Randomly generated simulation value
-
-- **License Plate**
-  - Random generated and does not verify if the detected object is a real car
-
-This version demonstrates a real physical speed calculation while simulating additional telemetry values for a complete IoT data pipeline.
-
-
 ---
 
 ## 📊 Monitoring and Logging
