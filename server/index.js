@@ -6,24 +6,32 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+app.disable('x-powered-by');
+app.use(require('helmet')({ contentSecurityPolicy: false }));
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+app.use(cors({ origin: (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)) }));
+app.use('/api', require('express-rate-limit').rateLimit({ windowMs: 60000, limit: 120 }));
+app.use('/api', require('./security').createApiGuard());
+app.use('/api', require('./public-telemetry').limitPublicTelemetry);
 // parse JSON bodies for admin endpoints
-app.use(express.json());
+app.use(express.json({ limit: '16kb' }));
 
 // Simple request logging for debugging frontend requests
 app.use((req, res, next) => {
   try {
-    console.log(`[req] ${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
+    console.log(`[req] ${new Date().toISOString()} ${req.method} ${req.path}`);
   } catch (e) {}
   next();
 });
 
 // AWS SDK for DynamoDB access
-const AWS = require('aws-sdk');
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocument, ScanCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+const { IoTDataPlane, GetThingShadowCommand, UpdateThingShadowCommand } = require('@aws-sdk/client-iot-data-plane');
+const { CognitoIdentityProvider, AdminCreateUserCommand, AdminAddUserToGroupCommand } = require('@aws-sdk/client-cognito-identity-provider');
 const axios = require('axios');
 const region = process.env.AWS_REGION || 'eu-central-1';
-AWS.config.update({ region });
-const ddb = new AWS.DynamoDB.DocumentClient();
+const ddb = DynamoDBDocument.from(new DynamoDBClient({ region }), { marshallOptions: { removeUndefinedValues: true } });
 const DDB_TABLE = process.env.DDB_TABLE || 'ESP_Data';
 const DATA_API_URL = process.env.DATA_API_URL || null; // external API (API Gateway) base URL to fetch DynamoDB data
 const DATA_API_KEY = process.env.DATA_API_KEY || null; // optional x-api-key for API Gateway
@@ -65,13 +73,13 @@ const TOPIC_FILTER = process.env.STATUS_TOPIC_FILTER || '+/status';
 let mqttConnected = false;
 
 // IoT Data client for Device Shadow access (used for authoritative online/offline)
-const iotData = new AWS.IotData({ endpoint: IOT_ENDPOINT });
+const iotData = new IoTDataPlane({ region, endpoint: `https://${IOT_ENDPOINT}` });
 
 async function getShadow(thingName) {
   try {
-    const resp = await iotData.getThingShadow({ thingName }).promise();
+    const resp = await iotData.send(new GetThingShadowCommand({ thingName }));
     if (resp && resp.payload) {
-      const payload = JSON.parse(resp.payload.toString());
+      const payload = JSON.parse(Buffer.from(resp.payload).toString('utf8'));
       return payload;
     }
     return null;
@@ -186,7 +194,7 @@ async function pollDynamoForStatus() {
     const items = [];
     let data;
     do {
-      data = await ddb.scan(params).promise();
+      data = await ddb.send(new ScanCommand(params));
       if (data.Items) items.push(...data.Items);
       params.ExclusiveStartKey = data.LastEvaluatedKey;
     } while (data.LastEvaluatedKey);
@@ -232,9 +240,9 @@ function parseSketch(src) {
 
 app.get('/api/esp32/info', (req, res) => {
   fs.readFile(SKETCH_PATH, 'utf8', (err, data) => {
-    if (err) return res.status(500).json({ error: 'Cannot read sketch file', detail: err.message });
+    if (err) return res.status(500).json({ error: 'Cannot read sketch file', detail: 'Request failed' });
     const parsed = parseSketch(data);
-    return res.json({ parsed, raw: data.split('\n').slice(0,300).join('\n') });
+    return res.json({ parsed, raw: undefined });
   });
 });
 
@@ -278,10 +286,10 @@ app.get('/api/devices/:id', async (req, res) => {
       ScanIndexForward: false, // descending by sort key (timestamp)
       Limit: 50
     };
-    const data = await ddb.query(params).promise();
+    const data = await ddb.send(new QueryCommand(params));
     return res.json({ device_id: deviceId, items: data.Items || [] });
   } catch (err) {
-    return res.status(500).json({ error: 'DynamoDB query failed', detail: err.message });
+    return res.status(500).json({ error: 'DynamoDB query failed', detail: 'Request failed' });
   }
 });
 
@@ -353,7 +361,7 @@ app.get('/api/devices', async (req, res) => {
     const items = [];
     let data;
     do {
-      data = await ddb.scan(params).promise();
+      data = await ddb.send(new ScanCommand(params));
       if (data.Items) items.push(...data.Items);
       params.ExclusiveStartKey = data.LastEvaluatedKey;
     } while (data.LastEvaluatedKey);
@@ -374,7 +382,7 @@ app.get('/api/devices', async (req, res) => {
     });
     return res.json({ devices });
   } catch (err) {
-    return res.status(500).json({ error: 'DynamoDB scan failed', detail: err.message });
+    return res.status(500).json({ error: 'DynamoDB scan failed', detail: 'Request failed' });
   }
 });
 
@@ -421,7 +429,7 @@ app.get('/api/devices/:id/shadow', async (req, res) => {
                 ScanIndexForward: false,
                 Limit: 1
               };
-              const data = await ddb.query(params).promise();
+              const data = await ddb.send(new QueryCommand(params));
               const item = (data.Items && data.Items[0]) || null;
               const lastSeen = item ? (item.timestamp || null) : null;
               online = lastSeen ? ((Date.now() - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
@@ -456,16 +464,16 @@ app.get('/api/devices/:id/shadow', async (req, res) => {
         ScanIndexForward: false,
         Limit: 1
       };
-      const data = await ddb.query(params).promise();
+      const data = await ddb.send(new QueryCommand(params));
       const item = (data.Items && data.Items[0]) || null;
       const lastSeen = item ? (item.timestamp || null) : null;
       const online = lastSeen ? ((Date.now() - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
       return res.json({ device_id: deviceId, lastSeen, online, source: 'ddb' });
     } catch (ddbErr) {
-      return res.status(500).json({ error: 'DynamoDB query failed', detail: ddbErr.message });
+      return res.status(500).json({ error: 'DynamoDB query failed', detail: 'Request failed' });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Shadow lookup failed', detail: err.message });
+    return res.status(500).json({ error: 'Shadow lookup failed', detail: 'Request failed' });
   }
 });
 
@@ -487,7 +495,7 @@ app.post('/api/devices/:id/force-offline-shadow', async (req, res) => {
   const reported = { online: false, lastSeen: now };
   const payload = { state: { reported } };
   try {
-    await iotData.updateThingShadow({ thingName: deviceId, payload: Buffer.from(JSON.stringify(payload)) }).promise();
+    await iotData.send(new UpdateThingShadowCommand({ thingName: deviceId, payload: Buffer.from(JSON.stringify(payload)) }));
     // also update in-memory map so UI updates immediately
     const offlineTs = now - (ONLINE_THRESHOLD_MS + 1000);
     lastStatusByDevice.set(deviceId, { lastSeen: offlineTs, online: false });
@@ -495,7 +503,7 @@ app.post('/api/devices/:id/force-offline-shadow', async (req, res) => {
     return res.json({ device_id: deviceId, updated: 'shadow', reported, result: 'ok' });
   } catch (e) {
     console.error('updateThingShadow failed', e && e.message);
-    return res.status(500).json({ error: 'updateThingShadow failed', detail: e && e.message });
+    return res.status(500).json({ error: 'updateThingShadow failed', detail: 'Request failed' });
   }
 });
 
@@ -534,7 +542,7 @@ app.post('/api/devices/:id/force-offline-shadow', async (req, res) => {
   const reported = { online: false, lastSeen: now };
   const payload = { state: { reported } };
   try {
-    await iotData.updateThingShadow({ thingName: deviceId, payload: Buffer.from(JSON.stringify(payload)) }).promise();
+    await iotData.send(new UpdateThingShadowCommand({ thingName: deviceId, payload: Buffer.from(JSON.stringify(payload)) }));
     // also update in-memory map so UI updates immediately
     const offlineTs = now - (ONLINE_THRESHOLD_MS + 1000);
     lastStatusByDevice.set(deviceId, { lastSeen: offlineTs, online: false });
@@ -542,7 +550,7 @@ app.post('/api/devices/:id/force-offline-shadow', async (req, res) => {
     return res.json({ device_id: deviceId, updated: 'shadow', reported, result: 'ok' });
   } catch (e) {
     console.error('updateThingShadow failed', e && e.message);
-    return res.status(500).json({ error: 'updateThingShadow failed', detail: e && e.message });
+    return res.status(500).json({ error: 'updateThingShadow failed', detail: 'Request failed' });
   }
 });
 
@@ -552,7 +560,7 @@ app.get('/api/internal/status-map', (req, res) => {
     const arr = Array.from(lastStatusByDevice.entries()).map(([k,v]) => ({ device_id: k, ...v }));
     return res.json({ count: arr.length, items: arr });
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: 'Request failed' });
   }
 });
 
@@ -564,7 +572,7 @@ app.get('/api/internal/status-map', (req, res) => {
     const arr = Array.from(lastStatusByDevice.entries()).map(([k,v]) => ({ device_id: k, ...v }));
     return res.json({ count: arr.length, items: arr });
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: 'Request failed' });
   }
 });
 
@@ -577,8 +585,8 @@ app.post('/api/admin/users', async (req, res) => {
     const { email, temporaryPassword, role } = req.body || {};
     if (!email) return res.status(400).json({ error: 'email is required' });
 
-    const cognito = new AWS.CognitoIdentityServiceProvider();
-    const temp = temporaryPassword || `Temp#${Math.floor(Math.random()*1e9)}`;
+    const cognito = new CognitoIdentityProvider({ region });
+    const temp = temporaryPassword || `Aa1!${require('node:crypto').randomBytes(24).toString('base64url')}`;
     const createParams = {
       UserPoolId: COGNITO_USER_POOL_ID,
       Username: email,
@@ -586,25 +594,25 @@ app.post('/api/admin/users', async (req, res) => {
       MessageAction: 'SUPPRESS',
       UserAttributes: [
         { Name: 'email', Value: email },
-        { Name: 'email_verified', Value: 'true' }
+        { Name: 'email_verified', Value: 'false' }
       ]
     };
-    await cognito.adminCreateUser(createParams).promise();
+    await cognito.send(new AdminCreateUserCommand(createParams));
 
     // Add to admin group if requested/available
     if ((role || '').toLowerCase() === 'admin' && COGNITO_ADMIN_GROUP) {
       try {
-        await cognito.adminAddUserToGroup({
+        await cognito.send(new AdminAddUserToGroupCommand({
           UserPoolId: COGNITO_USER_POOL_ID,
           Username: email,
           GroupName: COGNITO_ADMIN_GROUP,
-        }).promise();
+        }));
       } catch (e) {
         // ignore group add failure, return create success
       }
     }
     return res.json({ ok: true, email });
   } catch (e) {
-    return res.status(500).json({ error: e && e.message ? e.message : 'adminCreateUser failed' });
+    return res.status(500).json({ error: 'User creation failed' });
   }
 });

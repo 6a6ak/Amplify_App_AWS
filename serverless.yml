@@ -2,12 +2,15 @@ service: amplify-esp32-api
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs22.x
   region: eu-central-1
   environment:
     DDB_TABLE: ESP_Data
     STATUS_TOPIC_FILTER: "+/status"
     ONLINE_THRESHOLD_MS: "60000"
+    COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
+    COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
+    COGNITO_ADMIN_GROUP: ${env:COGNITO_ADMIN_GROUP, 'admin'}
 
 functions:
   api:
@@ -20,5 +23,8 @@ functions:
 package:
   patterns:
     - 'server/**'
-    - '!server/node_modules/aws-sdk/**'
+    - '!server/.env*'
+    - '!server/aws_tmp/**'
+    - '!server/aws_lambda/**'
+    - '!server/**/*.test.js'
     - '!**/.git/**'

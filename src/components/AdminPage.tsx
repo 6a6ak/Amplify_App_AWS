@@ -1,4 +1,5 @@
 import React from "react";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { Link } from "react-router-dom";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { Bar } from "react-chartjs-2";
@@ -39,7 +40,8 @@ export default function AdminPage() {
     if (isRefreshing) return;
     setIsRefreshing(true);
     try {
-      const res = await fetch("/api/internal/status-map");
+      const session = await fetchAuthSession();
+      const res = await fetch("/api/internal/status-map", { headers: { Authorization: `Bearer ${session.tokens?.accessToken.toString() || ""}` } });
       const json = await res.json();
       if (res.ok) {
         const items = json.items || [];

@@ -7,7 +7,9 @@
     "build": "vite build --config vite.config.mjs",
     "preview": "vite preview",
     "start:prod": "npm run build && node server/index.js",
-    "serve": "npm run start:prod"
+    "serve": "npm run start:prod",
+    "test:security": "node --test server/security.test.js server/public-telemetry.test.js server/aws_lambda/index.test.js && tsx --test amplify/functions/shared/ingestion.test.ts",
+    "typecheck:backend": "tsc --noEmit -p amplify/tsconfig.json"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.13.1",
@@ -21,9 +23,22 @@
     "react-router-dom": "^7.10.0"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.25.1",
+    "@types/aws-lambda": "^8.10.164",
+    "@types/node": "^22.20.5",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "vite": "^4.0.0"
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^6.4.5"
+  },
+  "overrides": {
+    "handlebars": "^4.7.10",
+    "immutable": "^3.8.4",
+    "lodash": "^4.18.1"
+  },
+  "engines": {
+    "node": ">=22.15.0"
   }
 }
