@@ -3,6 +3,7 @@
 #include <WiFiClientSecure.h>
 #include <MQTTClient.h>
 #include <ArduinoJson.h>
+#include <time.h>
 
 #define AWS_IOT_PUBLISH_TOPIC   "/telemetry"
 #define AWS_IOT_SUBSCRIBE_TOPIC "/downlink"
@@ -33,13 +34,24 @@ void connectAWS() {
   }
   Serial.println("\nWiFi connected - IP: " + WiFi.localIP().toString());
 
-  BearSSL::X509List rootCert(AWS_CERT_CA);
-  BearSSL::X509List clientCert(AWS_CERT_CRT);
-  BearSSL::PrivateKey privateKey(AWS_CERT_PRIVATE);
+  // Certificate validity requires a synchronized clock. Never bypass TLS checks.
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+  const unsigned long clockStart = millis();
+  while (time(nullptr) < 1704067200) {
+    if (millis() - clockStart > 30000) {
+      Serial.println("Clock synchronization failed; restarting without connecting.");
+      ESP.restart();
+      return;
+    }
+    delay(100);
+  }
+
+  static BearSSL::X509List rootCert(AWS_CERT_CA);
+  static BearSSL::X509List clientCert(AWS_CERT_CRT);
+  static BearSSL::PrivateKey privateKey(AWS_CERT_PRIVATE);
 
   net.setTrustAnchors(&rootCert);
   net.setClientRSACert(&clientCert, &privateKey);
-  net.setInsecure();   // Allow CA Validation only
   net.setBufferSizes(512, 512);
 
   client.begin(AWS_IOT_ENDPOINT, 8883, net);

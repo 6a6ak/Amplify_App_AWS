@@ -3,7 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install
+        - nvm install 22
+        - nvm use 22
+        - npm ci
     build:
       commands:
         - npm run build
@@ -15,4 +17,4 @@ frontend:
     paths:
       - node_modules/**/
 runtime:
-  - nodejs: 18
+  - nodejs: 22
