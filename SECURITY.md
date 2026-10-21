@@ -27,7 +27,9 @@ Deploy the Amplify schema and ingestion functions together: IAM grants and runti
 - Backend TypeScript check and production frontend build passed, including with the bundled Node 24 runtime.
 - ESP8266 firmware compiled successfully for esp8266:esp8266:nodemcuv2. The duplicate sketch has the same TLS fix; hardware connectivity was not tested.
 - Production dependency audits report zero vulnerabilities in root, server, and server/aws_lambda.
-- Full root audit still reports 33 high findings in Amplify backend development/code-generation dependencies. Compatible patched lodash, immutable and handlebars versions are pinned via overrides. No critical findings remain. Remaining GraphQL utility upgrades cross major versions and braces currently has no patched published release; these are not suppressed or claimed fixed.
+- Full audits, including development dependencies, report zero vulnerabilities in all three package directories. GraphQL utility/schema/merge packages are upgraded together and tested through actual Amplify model, operation and type generation. A private, MIT-licensed local braces security fork limits parser nesting and validates supplied ASTs before recursive traversal; see vendor/braces/SECURITY-PATCH.md. No advisory is hidden using an audit-ignore list. The local fork must be maintained until an upstream fix exists.
+- Six additional dependency regressions pass, including prototype pollution, deep/cyclic AST rejection and generator compatibility (twenty regression tests total).
+- npm ci dependency-resolution dry run passes. .npmrc installs file dependencies as packed copies and disables automatic peer resolution to avoid inconsistent bundled Amplify peers; required CDK/GraphQL peers are explicit development dependencies.
 
 ## External actions still required
 
