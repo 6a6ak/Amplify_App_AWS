@@ -47,7 +47,8 @@
     "@graphql-tools/utils": "$@graphql-tools/utils",
     "braces": "$braces",
     "@graphql-tools/schema": "^10.1.5",
-    "@graphql-tools/merge": "^9.2.8"
+    "@graphql-tools/merge": "^9.2.8",
+    "@opentelemetry/core": "^2.8.0"
   },
   "engines": {
     "node": ">=22.15.0"
