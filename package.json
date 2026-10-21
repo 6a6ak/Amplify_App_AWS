@@ -9,7 +9,8 @@
     "start:prod": "npm run build && node server/index.js",
     "serve": "npm run start:prod",
     "test:security": "node --test server/security.test.js server/public-telemetry.test.js server/aws_lambda/index.test.js && tsx --test amplify/functions/shared/ingestion.test.ts",
-    "typecheck:backend": "tsc --noEmit -p amplify/tsconfig.json"
+    "typecheck:backend": "tsc --noEmit -p amplify/tsconfig.json",
+    "test:dependency-security": "node --test tests/dependency-security.test.cjs"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.13.1",
@@ -31,12 +32,23 @@
     "@vitejs/plugin-react": "^5.1.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
-    "vite": "^6.4.5"
+    "vite": "^6.4.5",
+    "braces": "file:./vendor/braces",
+    "@graphql-tools/utils": "^12.0.1",
+    "aws-cdk-lib": "^2.274.0",
+    "constructs": "^10.8.1",
+    "graphql": "^15.8.0",
+    "@aws-amplify/graphql-generator": "^0.5.4"
   },
   "overrides": {
     "handlebars": "^4.7.10",
     "immutable": "^3.8.4",
-    "lodash": "^4.18.1"
+    "lodash": "^4.18.1",
+    "@graphql-tools/utils": "$@graphql-tools/utils",
+    "braces": "$braces",
+    "@graphql-tools/schema": "^10.1.5",
+    "@graphql-tools/merge": "^9.2.8",
+    "@opentelemetry/core": "^2.8.0"
   },
   "engines": {
     "node": ">=22.15.0"
