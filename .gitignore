@@ -47,3 +47,21 @@ aws_iotcore_esp/esp8266/aws_iotcore_esp8266/aws_iotcore_esp8266/secrets.h
 
 # ESP8266 Certificates
 aws_iotcore_esp/esp8266/aws_iotcore_esp8266/aws_iotcore_esp8266/Cert/*
+# Local identity material and generated deployment artifacts
+**/secrets.h
+**/secrets_old.h
+*.key
+*.pem
+*.pem.crt
+*.pem.key
+*.p12
+*.pfx
+*.zip
+.serverless/
+*.git/
+server/aws_tmp/
+tmp_*.js
+tmp_*.html
+*build_log*.txt
+!*.template.h
+!.env.example

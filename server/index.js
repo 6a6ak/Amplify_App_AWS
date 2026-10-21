@@ -6,14 +6,19 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+app.disable('x-powered-by');
+app.use(require('helmet')({ contentSecurityPolicy: false }));
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+app.use(cors({ origin: (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)) }));
+app.use('/api', require('express-rate-limit').rateLimit({ windowMs: 60000, limit: 120 }));
+app.use('/api', require('./security').createApiGuard());
 // parse JSON bodies for admin endpoints
-app.use(express.json());
+app.use(express.json({ limit: '16kb' }));
 
 // Simple request logging for debugging frontend requests
 app.use((req, res, next) => {
   try {
-    console.log(`[req] ${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
+    console.log(`[req] ${new Date().toISOString()} ${req.method} ${req.path}`);
   } catch (e) {}
   next();
 });
@@ -232,9 +237,9 @@ function parseSketch(src) {
 
 app.get('/api/esp32/info', (req, res) => {
   fs.readFile(SKETCH_PATH, 'utf8', (err, data) => {
-    if (err) return res.status(500).json({ error: 'Cannot read sketch file', detail: err.message });
+    if (err) return res.status(500).json({ error: 'Cannot read sketch file', detail: 'Request failed' });
     const parsed = parseSketch(data);
-    return res.json({ parsed, raw: data.split('\n').slice(0,300).join('\n') });
+    return res.json({ parsed, raw: undefined });
   });
 });
 
@@ -281,7 +286,7 @@ app.get('/api/devices/:id', async (req, res) => {
     const data = await ddb.query(params).promise();
     return res.json({ device_id: deviceId, items: data.Items || [] });
   } catch (err) {
-    return res.status(500).json({ error: 'DynamoDB query failed', detail: err.message });
+    return res.status(500).json({ error: 'DynamoDB query failed', detail: 'Request failed' });
   }
 });
 
@@ -374,7 +379,7 @@ app.get('/api/devices', async (req, res) => {
     });
     return res.json({ devices });
   } catch (err) {
-    return res.status(500).json({ error: 'DynamoDB scan failed', detail: err.message });
+    return res.status(500).json({ error: 'DynamoDB scan failed', detail: 'Request failed' });
   }
 });
 
@@ -462,10 +467,10 @@ app.get('/api/devices/:id/shadow', async (req, res) => {
       const online = lastSeen ? ((Date.now() - lastSeen) <= ONLINE_THRESHOLD_MS) : false;
       return res.json({ device_id: deviceId, lastSeen, online, source: 'ddb' });
     } catch (ddbErr) {
-      return res.status(500).json({ error: 'DynamoDB query failed', detail: ddbErr.message });
+      return res.status(500).json({ error: 'DynamoDB query failed', detail: 'Request failed' });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Shadow lookup failed', detail: err.message });
+    return res.status(500).json({ error: 'Shadow lookup failed', detail: 'Request failed' });
   }
 });
 
@@ -495,7 +500,7 @@ app.post('/api/devices/:id/force-offline-shadow', async (req, res) => {
     return res.json({ device_id: deviceId, updated: 'shadow', reported, result: 'ok' });
   } catch (e) {
     console.error('updateThingShadow failed', e && e.message);
-    return res.status(500).json({ error: 'updateThingShadow failed', detail: e && e.message });
+    return res.status(500).json({ error: 'updateThingShadow failed', detail: 'Request failed' });
   }
 });
 
@@ -542,7 +547,7 @@ app.post('/api/devices/:id/force-offline-shadow', async (req, res) => {
     return res.json({ device_id: deviceId, updated: 'shadow', reported, result: 'ok' });
   } catch (e) {
     console.error('updateThingShadow failed', e && e.message);
-    return res.status(500).json({ error: 'updateThingShadow failed', detail: e && e.message });
+    return res.status(500).json({ error: 'updateThingShadow failed', detail: 'Request failed' });
   }
 });
 
@@ -552,7 +557,7 @@ app.get('/api/internal/status-map', (req, res) => {
     const arr = Array.from(lastStatusByDevice.entries()).map(([k,v]) => ({ device_id: k, ...v }));
     return res.json({ count: arr.length, items: arr });
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: 'Request failed' });
   }
 });
 
@@ -564,7 +569,7 @@ app.get('/api/internal/status-map', (req, res) => {
     const arr = Array.from(lastStatusByDevice.entries()).map(([k,v]) => ({ device_id: k, ...v }));
     return res.json({ count: arr.length, items: arr });
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: 'Request failed' });
   }
 });
 
@@ -578,7 +583,7 @@ app.post('/api/admin/users', async (req, res) => {
     if (!email) return res.status(400).json({ error: 'email is required' });
 
     const cognito = new AWS.CognitoIdentityServiceProvider();
-    const temp = temporaryPassword || `Temp#${Math.floor(Math.random()*1e9)}`;
+    const temp = temporaryPassword || `Aa1!${require('node:crypto').randomBytes(24).toString('base64url')}`;
     const createParams = {
       UserPoolId: COGNITO_USER_POOL_ID,
       Username: email,
@@ -586,7 +591,7 @@ app.post('/api/admin/users', async (req, res) => {
       MessageAction: 'SUPPRESS',
       UserAttributes: [
         { Name: 'email', Value: email },
-        { Name: 'email_verified', Value: 'true' }
+        { Name: 'email_verified', Value: 'false' }
       ]
     };
     await cognito.adminCreateUser(createParams).promise();
@@ -605,6 +610,6 @@ app.post('/api/admin/users', async (req, res) => {
     }
     return res.json({ ok: true, email });
   } catch (e) {
-    return res.status(500).json({ error: e && e.message ? e.message : 'adminCreateUser failed' });
+    return res.status(500).json({ error: 'User creation failed' });
   }
 });

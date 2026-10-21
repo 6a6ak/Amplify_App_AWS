@@ -8,10 +8,6 @@ const AMPLIFY_SSM_ENV_CONFIG = process.env.AMPLIFY_SSM_ENV_CONFIG as string;
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
 export const handler: Handler = async (event, context) => {
-    console.log(`EVENT: ${JSON.stringify(event)}`);
-    console.log(`GRAPHQL_ENDPOINT: ${GRAPHQL_ENDPOINT}`);
-    console.log(`GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}`);
-    console.log(`AMPLIFY_SSM_ENV_CONFIG: ${AMPLIFY_SSM_ENV_CONFIG}`);
 
 
     let statusCode = 200;
@@ -40,13 +36,11 @@ export const handler: Handler = async (event, context) => {
                 `})
     });
 
-    console.log("request:", request)
 
     try {
         response = await fetch(request);
         responseBody = await response.json();
 
-        console.log("responseBody:", responseBody)
         if (responseBody.errors) statusCode = 400;
     } catch (error) {
         statusCode = 400;
